@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace Bug_Tracker.Helper
+namespace Bug_Tracker.Helpers
 {
     public class StringUtilities
     {

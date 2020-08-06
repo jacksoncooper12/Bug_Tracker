@@ -1,0 +1,53 @@
+﻿@using Bug_Tracker.Models
+@model IEnumerable<Bug_Tracker.Models.ApplicationUser>
+<style>
+    #UserIds{
+        height:400px
+    }
+</style>
+@{ 
+    var roleHelper = new Bug_Tracker.Helpers.RoleHelper();
+}
+<h2>Manage Roles</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-8">
+            @Html.ListBox("UserIds")
+        </div>
+        <div class="col-md-4">
+            @Html.DropDownList("RoleName", "--Remove Role--")
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="submit" class="btn btn-primary" style="width:100%"> Submit</button>
+        </div>
+    </div>
+}
+<hr />
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Users")
+        </th>
+        <th>
+            @Html.DisplayName("Role")
+        </th>
+    </tr>
+    @foreach (var person in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => person.Email)
+            </td>
+            <td>
+                @roleHelper.ListUserRoles(person.Id).FirstOrDefault()
+            </td>
+        </tr>
+    }
+
+</table>
+

@@ -1,11 +1,12 @@
 ﻿using Bug_Tracker.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Bug_Tracker.Helper
+namespace Bug_Tracker.Helpers
 {
     public class UserHelper
     {
@@ -28,5 +29,6 @@ namespace Bug_Tracker.Helper
             var user = db.Users.Find(userId);
             return user.AvatarPath;
         }
+
     }
 }

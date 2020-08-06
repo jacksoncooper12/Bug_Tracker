@@ -1,0 +1,30 @@
+﻿@model Bug_Tracker.Models.ApplicationUser
+
+@{
+    ViewBag.Title = "ManageUserRole";
+}
+
+<h2>ManageUserRoles</h2>
+
+<div class="row">
+    <div class="col-3 text-center">
+        Managing role for @Model.FullName
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-3">
+            @Html.DropDownList("RoleName", "-- Remove Role --")
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <button type="submit" style="width:100%" class="btn btn-primary">Manage Role</button>
+        </div>
+    </div>
+}
+
+
