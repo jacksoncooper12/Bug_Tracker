@@ -1,0 +1,31 @@
+﻿@model Bug_Tracker.Models.Project
+@{
+    ViewBag.Title = "ManageProjectUsers";
+    var projectHelper = new Bug_Tracker.Helpers.ProjectHelper();
+}
+    <style>
+        #UserIds, #ProjectIds {
+            height: 200px
+        }
+    </style>
+<h2>Manage Project Users</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-sm-8">
+            Select User(s)<br />
+            Ordered Alphabetically by Last Name<br />
+            <h2>@Html.ListBox("UserIds")</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <button type="submit" class="btn btn-primary" style="width:15em">Add User(s) to Project(s)</button>
+        </div>
+    </div>
+}
+<hr />
+

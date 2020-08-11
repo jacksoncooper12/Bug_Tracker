@@ -1,114 +1,83 @@
-﻿@model Bug_Tracker.Models.Ticket
+﻿@using Microsoft.AspNet.Identity
+@using Bug_Tracker.Helpers
+@model Bug_Tracker.Models.Ticket
 
 @{
     ViewBag.Title = "Details";
+    var projectHelper = new ProjectHelper();
 }
+<style>
+    .margPad{
+        margin-top:40px;
+        padding-right:10px;
+        padding-left:10px;
+        border-radius:3px;
+    }
+</style>
+    <div class="row">
+        <div class="col">
+            <h1 class="margPad">Ticket Details</h1>
+        </div>
+        <div class="col">
+            @if (Model.TicketPriority.Name == "URGENT")
+            {
+                <h1 class="float-lg-right margPad bg-red">URGENT Priority</h1>
+            }
+            @if (Model.TicketPriority.Name == "Low")
+            {
+                <h1 class="float-lg-right margPad bg-gradient-green">Low Priority</h1>
+            }
+            @if (Model.TicketPriority.Name == "Medium")
+            {
+                <h1 class="float-lg-right margPad bg-gradient-yellow">Medium Priority</h1>
+            }
+            @if (Model.TicketPriority.Name == "High")
+            {
+                <h1 class="float-lg-right margPad" style="background-color:#a10000; color:white">High Priority</h1>
+            }
+            @if (Model.TicketPriority.Name == "On Hold")
+            {
+                <h1 class="float-lg-right  margPad">On Hold</h1>
+            }
+        </div>
+    </div>
+    
 
-<h2>Details</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <div class="small-box bg-success">
+            <h1 style="font-size:58px; padding:20px;">@Model.Title</h1>
+            @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.ProjectId))
+            {
+                <h4 style="font-size:32px; padding:20px; cursor:pointer" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:30px"> </i> Edit Ticket</h4>
+            }
+            @if (Model.Developer == null)
+            {
+                <h4 style="font-size:32px; padding:20px;">No Assigned Developer</h4>
+            }
+            else
+            {
+                <h4 style="font-size:32px; padding:20px;">Developer: @Model.Developer.FullName</h4>
+            }
+            @if (Model.Submitter == null)
+            {
+                <h4 style="font-size:32px; padding:20px; padding-bottom:40px">No Submitter</h4><hr />
+            }
+            else
+            {
+                <h4 style="font-size:32px; padding:20px; padding-bottom:40px">Submitter: @Model.Submitter.FullName</h4><hr />
+            }
+            <div class="text-center" style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Projects", new { id = Model.ProjectId })'">
+                <h4 style="font-size:28px;text-decoration:underline">Project</h4>
+                <h4 style="font-size:28px; padding-bottom:20px">@Model.Project.Name</h4>
+            </div>
 
-<div>
-    <h4>Ticket</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Developer.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Developer.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Project.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Project.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Submitter.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Submitter.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TicketPriority.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TicketPriority.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TicketStatus.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TicketStatus.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TicketType.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TicketType.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IsResolved)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IsResolved)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IsArchived)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IsArchived)
-        </dd>
-
-    </dl>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="small-box bg-gradient-primary">
+            <h1 style="padding:20px; padding-bottom:5px">Issue Description</h1><hr />
+            <h4 style="font-size:30px; padding:20px; padding-bottom:40px">@Model.Description</h4><hr />
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
