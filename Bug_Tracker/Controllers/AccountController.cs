@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using Bug_Tracker.Models;
 using System.Net.Mail;
 using System.Configuration;
+using Bug_Tracker.Helpers;
 
 namespace Bug_Tracker.Controllers
 {
@@ -52,6 +53,48 @@ namespace Bug_Tracker.Controllers
             {
                 _userManager = value;
             }
+        }
+        private ApplicationDbContext db = new ApplicationDbContext();
+        private ProjectHelper projectHelper = new ProjectHelper();
+        private RoleHelper roleHelper = new RoleHelper();
+        [Authorize]
+        public ActionResult Index(string userid)
+        {
+            AccountIndex viewModel = new AccountIndex();
+            var user = db.Users.Find(userid);
+            viewModel.AllProjects = db.Projects.ToList();
+            viewModel.User = user;
+            viewModel.UserRole = roleHelper.ListUserRoles(userid).FirstOrDefault();
+            if (viewModel.UserRole == "Admin")
+            {
+                viewModel.Projects = db.Projects.ToList();
+                viewModel.Tickets = db.Tickets.ToList();
+            }
+            else if (viewModel.UserRole == "ProjectManager")
+            {
+                viewModel.Projects = projectHelper.ListUserProjects(userid);
+                viewModel.Tickets = projectHelper.ListUserProjects(userid).SelectMany(p => p.Tickets).ToList();
+            }
+            else if (viewModel.UserRole == "Developer")
+            {
+                viewModel.Projects = projectHelper.ListUserProjects(userid);
+                viewModel.Tickets = db.Tickets.Where(t => t.DeveloperId == userid).ToList();
+            }
+            else if (viewModel.UserRole == "Submitter")
+            {
+                viewModel.Projects = projectHelper.ListUserProjects(userid);
+                viewModel.Tickets = db.Tickets.Where(t => t.SubmitterId == userid).ToList();
+            }
+
+            return View(viewModel);
+            
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(int userId)
+        {
+            return View();
         }
 
         //

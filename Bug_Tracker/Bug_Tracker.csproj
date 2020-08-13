@@ -193,6 +193,7 @@
       <DependentUpon>202008101648019_SeedTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AccountIndex.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\EmailModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -402,6 +403,7 @@
     <Content Include="WebFonts\fa-solid-900.woff" />
     <Content Include="WebFonts\fa-solid-900.woff2" />
     <Content Include="Views\Assignments\RemoveProjectUsers.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008101648019_SeedTest.resx">
