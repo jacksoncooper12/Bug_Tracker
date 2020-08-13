@@ -1,4 +1,4 @@
-﻿@model Bug_Tracker.Models.Project
+﻿@model Bug_Tracker.ViewModels.TicketCreation
 @using Bug_Tracker.Helpers
 @using Microsoft.AspNet.Identity
 @{
@@ -8,26 +8,42 @@
     ViewBag.Title = "Details";
 }
 
-
+<style>
+    .margPad {
+        padding-right: 10px;
+        padding-left: 10px;
+        border-radius: 3px;
+    }
+    .topPad{
+        padding-left:10px
+    }
+    #ticket_Description{
+        width:100%;
+        height:10em
+    }
+    .formPad{
+        padding-top:2em
+    }
+</style>
 
 <div>
-    <h2 class="topPad">Project Details</h2>
+    <h1 class="topPad">Project Details</h1>
     <hr />
     <div class="row">
         <div class="col-lg-4">
             <div class="small-box bg-success">
-                <h1 style="font-size:58px; padding:20px;">@Html.DisplayFor(model => model.Name)</h1>
-                @foreach (var user in @projectHelper.ListUsersOnProjectInRole(Model.Id, "ProjectManager"))
+                <h1 style="font-size:58px; padding:20px;">@Html.DisplayFor(model=>model.project.Name)</h1>
+                @foreach (var user in @projectHelper.ListUsersOnProjectInRole(Model.project.Id, "ProjectManager"))
                 {
                     <h4 style="font-size:28px; padding:20px">Manager: @user.FullName</h4>
                 }
-                <h5 style="font-size:22px; padding:20px;">@Html.DisplayNameFor(model => model.Created) @Model.Created.ToString("M/dd/yyyy")</h5>
-                <h5 style="font-size:22px; padding:20px;">@Model.Tickets.Count() Tickets</h5>
+                <h5 style="font-size:22px; padding:20px;">@Html.DisplayNameFor(model => model.project.Created) @Model.project.Created.ToString("M/dd/yyyy")</h5>
+                <h5 style="font-size:22px; padding:20px;">@Model.project.Tickets.Count() Tickets</h5>
                 <div class="row" style="margin:0px; padding-top:1.5em; font-weight:300">
-                    <div class="col bg-primary text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("Edit","Projects", new { id = Model.Id })'">
+                    <div class="col bg-primary text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("Edit","Projects", new { id = Model.project.Id })'">
                         <h3 style="font-weight: 400; font-size:30px; padding-top:12px; padding-bottom:5px">Edit</h3>
                     </div>
-                    <div class="col bg-gradient-red text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("Delete","Projects", new { id = Model.Id })'">
+                    <div class="col bg-gradient-red text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("Delete","Projects", new { id = Model.project.Id })'">
                         <h3 style="font-weight: 400; font-size:30px; padding-top:12px; padding-bottom:5px">Delete</h3>
                     </div>
                 </div>
@@ -49,13 +65,13 @@
                             </tr>
                             <tr>
                                 <th>
-                                    @foreach (var user in projectHelper.ListUsersOnProjectInRole(Model.Id, "Developer"))
+                                    @foreach (var user in projectHelper.ListUsersOnProjectInRole(Model.project.Id, "Developer"))
                                     {
                                         <h4>@user.FullName</h4>
                                     }
                                 </th>
                                 <th>
-                                    @foreach (var user in projectHelper.ListUsersOnProjectInRole(Model.Id, "Submitter"))
+                                    @foreach (var user in projectHelper.ListUsersOnProjectInRole(Model.project.Id, "Submitter"))
                                     {
                                         <h4>@user.FullName</h4>
                                     }
@@ -63,14 +79,14 @@
                             </tr>
                         </table>
                     </div>
-                    
+
 
                 </div>
                 <div class="row" style="margin:0px; padding-top:1.5em; font-weight:300">
-                    <div class="col bg-success text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("ManageProjectUsers","Assignments", new { projectId = Model.Id })'">
+                    <div class="col bg-success text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("ManageProjectUsers","Assignments", new { projectId = Model.project.Id })'">
                         <h3 style="font-weight: 400; font-size:30px; padding-top:12px; padding-bottom:5px">Add</h3>
                     </div>
-                    <div class="col bg-gradient-red text-center" style="border-radius:2px; cursor:pointer">
+                    <div class="col bg-gradient-red text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("RemoveProjectUsers","Assignments", new { projectId = Model.project.Id })'">
                         <h3 style="font-weight: 400; font-size:30px; padding-top:12px; padding-bottom:5px">Remove</h3>
                     </div>
                 </div>
@@ -79,88 +95,198 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <div class="small-box bg-gradient-gray" style="padding:10px">
+            <div class="small-box" style="padding:10px; background-color:#343a40; color:white">
                 <div class="row">
-                    <h1 style="padding:20px; padding-bottom:5px">Tickets</h1><hr />
-                    <h2 class="float-right" style="padding:20px; padding-bottom:30px; margin-top:8px; cursor:pointer" onclick="window.location.href='@Url.Action("Create","Tickets", new { projectId = Model.Id })'"><i class="fa fa-edit" style="font-size:30px"> </i> New Ticket</h2>
+                    <h1 style="padding: 20px; padding-bottom: 30px; margin-top: 8px;">Tickets</h1><hr />
+                    <h2 class="float-right ct" style="padding:20px; padding-bottom:30px; margin-top:8px; cursor:pointer" data-toggle="modal" data-target="#tmodal" @*onclick="window.location.href='@Url.Action("Create","Tickets", new { projectId = Model.Id })'"*@><i class="fa fa-edit" style="font-size:30px"> </i> New Ticket</h2>
                 </div>
                 <div style="padding:0px 10px 5px 10px;">
-                    <table class="table-bordered table bg-transparent">
-                        <tr style="font-size:22px; font-weight:500;">
-                            @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.Id))
-                            {
-                                <th>
-                                    Edit
-                                </th>
-                            }
-
-                            <th>
-                                Title
-                            </th>
-                            <th>
-                                Description
-                            </th>
-                            <th>
-                                Developer
-                            </th>
-                            <th>
-                                Priority
-                            </th>
-                            <th>
-                                Type
-                            </th>
-                            <th>
-                                Status
-                            </th>
-                        </tr>
-                        @foreach (var ticket in Model.Tickets)
-                        {
-                            <tr style="font-size:18px">
-                                @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.Id))
-                                {
-                                    <th style="cursor:pointer" onclick="window.location.href='@Url.Action("Edit","Tickets", new {ticket.Id })'">
-                                        <a>Edit</a>
-                                    </th>
-                                }
-                                <th style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
-                                    @ticket.Title
-                                </th>
-                                <th style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
-                                    @ticket.Description
-                                </th>
-                                @if (ticket.Developer == null)
+                    <table id="table_id" class="table-bordered table bg-transparent dataTable">
+                        <thead>
+                            <tr style="font-size:22px; font-weight:500;">
+                                @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.project.Id))
                                 {
                                     <th>
-                                        No Developer
+                                        Edit
                                     </th>
                                 }
-                                else
-                                {
-                                    <th>
-                                        @ticket.Developer.FullName
-                                    </th>
-                                }
-
-                                <th>
-                                    @ticket.TicketPriority.Name
+                                <th style="width:12em">
+                                    Title
                                 </th>
-                                <th>
-                                    @ticket.TicketType.Name
+                                <th style="width:25em">
+                                    Description
                                 </th>
-                                <th>
-                                    @ticket.TicketStatus.Name
+                                <th style="width:7em">
+                                    Developer
                                 </th>
-
+                                <th style="width:7em">
+                                    Priority
+                                </th>
+                                <th style="width:7em">
+                                    Type
+                                </th>
+                                <th style="width:5em">
+                                    Status
+                                </th>
                             </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ticket in Model.project.Tickets)
+                            {
+                                <tr style="font-size:18px">
+                                    @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.project.Id))
+                                    {
+                                        <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Edit","Tickets", new {ticket.Id })'">
+                                            <a>Edit</a>
+                                        </td>
+                                    }
+                                    <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
+                                        @ticket.Title
+                                    </td>
+                                    <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
+                                        @ticket.Description
+                                    </td>
+                                    @if (ticket.Developer == null)
+                                    {
+                                        <td>
+                                            No Developer
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @ticket.Developer.FullName
+                                        </td>
+                                    }
 
-                        }
+                                    <td class="text-center">
+                                        @if (ticket.TicketPriority.Name == "URGENT")
+                                        {
+                                            <span class=" margPad bg-red">URGENT</span>
+                                        }
+                                        @if (ticket.TicketPriority.Name == "Low")
+                                        {
+                                            <span class="margPad bg-gradient-green">Low </span>
+                                        }
+                                        @if (ticket.TicketPriority.Name == "Medium")
+                                        {
+                                            <span class="margPad bg-gradient-yellow">Medium</span>
+                                        }
+                                        @if (ticket.TicketPriority.Name == "High")
+                                        {
+                                            <span class="margPad" style="background-color:#a10000; color:white">High </span>
+                                        }
+                                        @if (ticket.TicketPriority.Name == "On Hold")
+                                        {
+                                            <span class=" margPad">On Hold</span>
+                                        }
+
+                                    </td>
+                                    <td>
+                                        @ticket.TicketType.Name
+                                    </td>
+                                    <td>
+                                        @ticket.TicketStatus.Name
+                                    </td>
+
+                                </tr>
 
 
-
+                            }
+                        </tbody>
                     </table>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="modal fade" id="tmodal">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                            <div class="modal-header text-center">
+                                <h2 class="modal-title w-100">New Ticket</h2>
+                            </div>
+                        <div class="modal-body">
+
+                            @using (Html.BeginForm("Create", "Tickets", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="form-horizontal">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.Hidden("ProjectId", Model.project.Id)
+                                    <div class="container">
+                                        <div class="container">
+
+                                            <div class="form-group formPad">
+                                                @Html.LabelFor(model => model.ticket.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-12">
+                                                    @Html.EditorFor(model => model.ticket.Title, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.ticket.Title, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group formPad">
+                                                @Html.LabelFor(model => model.ticket.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-12">
+                                                    @Html.TextAreaFor(model => model.ticket.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.ticket.Description, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="container">
+                                        <div class="row formPad">
+                                            <div class="form-group col-4" style="font-weight:bold; padding-left:22px">
+                                                Priority<br />
+                                                @Html.DropDownList("TicketPriorityId")
+                                                @Html.ValidationMessageFor(model => model.ticket.TicketPriorityId, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="form-group col-4" style="font-weight:bold; padding-left:18px">
+                                                Status<br />
+                                                @Html.DropDownList("TicketStatusId")
+                                                @Html.ValidationMessageFor(model => model.ticket.TicketStatusId, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="form-group col-3" style="font-weight:bold">
+                                                Type<br />
+                                                @Html.DropDownList("TicketTypeId")
+                                                @Html.ValidationMessageFor(model => model.ticket.TicketTypeId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group formPad">
+                                        <div class="col-12" style="padding-left: 20px">
+                                            <input type="submit" value="Create New Ticket" class="btn btn-primary" style="width:10em" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            </div>
+                            
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+</div>
+@section scripts{
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+        $(".ct").on("click", )
+    </script>
+
+}
+
+
 

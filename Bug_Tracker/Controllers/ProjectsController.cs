@@ -33,11 +33,17 @@ namespace Bug_Tracker.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Project project = db.Projects.Find(id);
-            if (project == null)
+
+            var tc = new TicketCreation();
+            tc.project = db.Projects.Find(id);
+            if (tc.project == null)
             {
                 return HttpNotFound();
             }
-            return View(project);
+            ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
+            ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name");
+            ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name");
+            return View(tc);
         }
 
         // GET: Projects/Create

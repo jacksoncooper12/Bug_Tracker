@@ -64,15 +64,15 @@ namespace Bug_Tracker.Controllers
         }
 
         // GET: Tickets/Create
-        [Authorize(Roles = "Submitter")]
+        /*[Authorize(Roles = "Submitter")]*/
         public ActionResult Create(int projectId)
         {
             var userId = User.Identity.GetUserId();
-            if(! projectHelper.IsUserOnProject(userId, projectId))
+            if (!projectHelper.IsUserOnProject(userId, projectId))
             {
                 return RedirectToAction("Details/" + projectId, "Projects");
             }
-            
+
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name");
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name");
@@ -84,22 +84,25 @@ namespace Bug_Tracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,Description,Title,DeveloperId")] Ticket ticket, int projectId)
+        public ActionResult Create([Bind(Include = "Id,Description,Title,DeveloperId")] Ticket ticket, int projectId , int ticketStatusId, int ticketPriorityId, int ticketTypeId)
         {
             var userId = User.Identity.GetUserId();
             if (ModelState.IsValid)
             {
                 ticket.ProjectId = projectId;
+                ticket.TicketPriorityId = ticketPriorityId;
+                ticket.TicketStatusId = ticketStatusId;
+                ticket.TicketTypeId = ticketTypeId;
                 ticket.Created = DateTime.Now;
                 ticket.SubmitterId = userId;
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
-                return RedirectToAction("Details/" + projectId, "Projects");
+                return RedirectToAction("Details", "Tickets", new { ticket.Id });
             }
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
-            return RedirectToAction("Details/" + projectId, "Projects");
+            return RedirectToAction("Details/", "Projects", new { ticket.Id });
         }
 
         // GET: Tickets/Edit/5
@@ -134,7 +137,7 @@ namespace Bug_Tracker.Controllers
             {
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Details", "Projects", new { id = projectId });
+                return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             ViewBag.DeveloperId = new SelectList(db.Users, "Id", "FirstName", ticket.DeveloperId);
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);

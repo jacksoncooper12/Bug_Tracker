@@ -211,6 +211,7 @@
     <Compile Include="ViewModels\MyTicketViewModel.cs" />
     <Compile Include="ViewModels\NavBarVM.cs" />
     <Compile Include="ViewModels\ProjectWizardVM.cs" />
+    <Compile Include="ViewModels\TicketCreation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Avatars\blueuser.png" />
@@ -224,10 +225,26 @@
     <Content Include="Content\adminlte.css" />
     <Content Include="Content\all.css" />
     <Content Include="Content\all.min.css" />
+    <Content Include="Content\animate.css" />
+    <Content Include="Content\animsition.min.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\dataTables.bootstrap4.css" />
     <Content Include="Content\daterangepicker.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\fontawesome.css" />
+    <Content Include="Content\hamburgers.min.css" />
+    <Content Include="Content\icon-font.min.css" />
+    <Content Include="Content\main.css" />
+    <Content Include="Content\select2.min.css" />
+    <Content Include="Content\util.css" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="Images\BG.jpg" />
+    <Content Include="Images\icons\favicon.ico" />
+    <Content Include="Images\icons\map-marker.png" />
     <Content Include="Scripts\adminlte.js" />
+    <Content Include="Scripts\animsition.min.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\countdowntime.js" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="Scripts\dataTables.bootstrap4.js" />
     <Content Include="Scripts\daterangepicker.js" />
@@ -243,13 +260,17 @@
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\demo.js" />
+    <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.knob.min.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jquery.overlayScrollbars.min.js" />
     <Content Include="Scripts\jquery.vmap.min.js" />
     <Content Include="Scripts\jquery.vmap.usa.js" />
+    <Content Include="Scripts\main.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\popper.js" />
+    <Content Include="Scripts\select2.min.js" />
     <Content Include="Scripts\sparkline.js" />
     <Content Include="Scripts\summernote-bs4.min.js" />
     <Content Include="Scripts\tempusdominus-bootstrap-4.min.js" />
@@ -342,6 +363,30 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\adminlte.css.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="fonts\poppins\Poppins-Black.ttf" />
+    <Content Include="fonts\poppins\Poppins-BlackItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Bold.ttf" />
+    <Content Include="fonts\poppins\Poppins-BoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraBold.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraBoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraLight.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraLightItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Italic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Light.ttf" />
+    <Content Include="fonts\poppins\Poppins-LightItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Medium.ttf" />
+    <Content Include="fonts\poppins\Poppins-MediumItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Regular.ttf" />
+    <Content Include="fonts\poppins\Poppins-SemiBold.ttf" />
+    <Content Include="fonts\poppins\Poppins-SemiBoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Thin.ttf" />
+    <Content Include="fonts\poppins\Poppins-ThinItalic.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\FontAwesome.otf" />
     <None Include="packages.config" />
     <Content Include="Scripts\adminlte.js.map" />
     <Content Include="WebFonts\fa-brands-400.eot" />
@@ -356,6 +401,7 @@
     <Content Include="WebFonts\fa-solid-900.ttf" />
     <Content Include="WebFonts\fa-solid-900.woff" />
     <Content Include="WebFonts\fa-solid-900.woff2" />
+    <Content Include="Views\Assignments\RemoveProjectUsers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008101648019_SeedTest.resx">

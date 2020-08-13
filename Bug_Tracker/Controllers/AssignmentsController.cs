@@ -54,7 +54,7 @@ namespace Bug_Tracker.Controllers
 
         public ActionResult ManageProjectUsers(int projectId)
         {
-            ViewBag.UserIds = new MultiSelectList(db.Users.OrderBy(x => x.LastName), "Id", "FullName");
+            ViewBag.UserIds = new MultiSelectList(projectHelper.ListUsersNotOnProject(projectId), "Id", "FullName");
             return View();
         }
 
@@ -74,8 +74,34 @@ namespace Bug_Tracker.Controllers
                     projectHelper.AddUserToProject(userId, projectId);
                 }
             }
-            ViewBag.UserIds = new MultiSelectList(db.Users.OrderBy(x => x.LastName), "Id", "FullName");
-            return RedirectToAction("Details/" + projectId,"Projects");
+            ViewBag.UserIds = new MultiSelectList(projectHelper.ListUsersNotOnProject(projectId), "Id", "FullName");
+            return RedirectToAction("Details", "Projects", new { id = projectId });
+        }
+
+        public ActionResult RemoveProjectUsers(int projectId)
+        {
+            ViewBag.UserIds = new MultiSelectList(projectHelper.ListUsersOnProject(projectId), "Id", "FullName");
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RemoveProjectUsers(List<string> userIds, int projectId)
+        {
+            if (userIds == null)
+            {
+                return RedirectToAction("ManageProjectUsers");
+            }
+            foreach (var userId in userIds)
+            {
+                if (userId != null)
+                {
+                    projectHelper.RemoveUserFromProject(userId, projectId);
+                }
+            }
+            ViewBag.UserIds = new MultiSelectList(projectHelper.ListUsersOnProject(projectId), "Id", "FullName");
+            return RedirectToAction("Details", "Projects", new { id = projectId });
         }
     }
 }

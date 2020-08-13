@@ -1,4 +1,8 @@
 ﻿@using Microsoft.AspNet.Identity
+@using Bug_Tracker.Helpers
+@{ 
+    var userHelper = new UserHelper();
+}
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -6,10 +10,10 @@
         @Html.AntiForgeryToken()
 
 
-        <div class="dropdown-item dropdown-footer">
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+        <div class="dropdown-item dropdown-footer" style="font-size:18px; cursor:pointer" onclick="window.location.href='@Url.Action("Index","Manage", new { id = Model.Id })'">
+            @Html.ActionLink(userHelper.GetFullName(User.Identity.GetUserId()), "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
         </div>
-        <div class="dropdown-item dropdown-footer">
+        <div class="dropdown-item dropdown-footer" style="font-size:18px; cursor:pointer" onclick="javascript:document.getElementById('logoutForm').submit()">
             <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
         </div>
 
@@ -17,11 +21,11 @@
 }
 else
 {
-    <div class="dropdown-item dropdown-footer">
+    <div class="dropdown-item dropdown-footer" style="font-size:18px; cursor:pointer" onclick="window.location.href='@Url.Action("Register","Account", new { id = "registerLink" })'">
         @Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })
     </div>
-    <div class="dropdown-item dropdown-footer">
+    <div class="dropdown-item dropdown-footer" style="font-size:18px; cursor:pointer" onclick="window.location.href='@Url.Action("Login","Account", new { id = "loginLink"})'">
             @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
     </div>
             
-        }
+}
