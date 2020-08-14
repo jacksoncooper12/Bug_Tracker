@@ -26,10 +26,10 @@ namespace Bug_Tracker.Models
         public virtual ApplicationUser Developer { get; set; }
 
         #region Children
-        public ICollection<TicketAttachment> TicketAttachments { get; set; }
-        public ICollection<TicketComment> TicketComments { get; set; }
-        public ICollection<TicketHistory> TicketHistories { get; set; }
-        public ICollection<TicketNotification> TicketNotifications { get; set; }
+        public virtual ICollection<TicketAttachment> TicketAttachments { get; set; }
+        public virtual ICollection<TicketComment> TicketComments { get; set; }
+        public virtual ICollection<TicketHistory> TicketHistories { get; set; }
+        public virtual ICollection<TicketNotification> TicketNotifications { get; set; }
         #endregion
 
         #region Actual Properties

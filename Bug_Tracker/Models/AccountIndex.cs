@@ -11,7 +11,7 @@ namespace Bug_Tracker.Models
         public ICollection<Project> Projects { get; set; }
         public ICollection<Project> AllProjects { get; set; }
         public ICollection<Ticket> Tickets { get; set; }
-        public string UserRole { get; set; }
+        public string Role { get; set; }
         public AccountIndex()
         {
             User = new ApplicationUser();

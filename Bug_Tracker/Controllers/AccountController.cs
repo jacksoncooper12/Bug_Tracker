@@ -60,33 +60,33 @@ namespace Bug_Tracker.Controllers
         [Authorize]
         public ActionResult Index(string userid)
         {
-            AccountIndex viewModel = new AccountIndex();
+            AccountIndex ai = new AccountIndex();
             var user = db.Users.Find(userid);
-            viewModel.AllProjects = db.Projects.ToList();
-            viewModel.User = user;
-            viewModel.UserRole = roleHelper.ListUserRoles(userid).FirstOrDefault();
-            if (viewModel.UserRole == "Admin")
+            ai.AllProjects = db.Projects.ToList();
+            ai.User = user;
+            ai.Role = roleHelper.ListUserRoles(userid).FirstOrDefault();
+            if (ai.Role == "Admin")
             {
-                viewModel.Projects = db.Projects.ToList();
-                viewModel.Tickets = db.Tickets.ToList();
+                ai.Projects = projectHelper.ListUserProjects(userid);
+                ai.Tickets = db.Tickets.ToList();
             }
-            else if (viewModel.UserRole == "ProjectManager")
+            else if (ai.Role == "ProjectManager")
             {
-                viewModel.Projects = projectHelper.ListUserProjects(userid);
-                viewModel.Tickets = projectHelper.ListUserProjects(userid).SelectMany(p => p.Tickets).ToList();
+                ai.Projects = projectHelper.ListUserProjects(userid);
+                ai.Tickets = projectHelper.ListUserProjects(userid).SelectMany(p => p.Tickets).ToList();
             }
-            else if (viewModel.UserRole == "Developer")
+            else if (ai.Role == "Developer")
             {
-                viewModel.Projects = projectHelper.ListUserProjects(userid);
-                viewModel.Tickets = db.Tickets.Where(t => t.DeveloperId == userid).ToList();
+                ai.Projects = projectHelper.ListUserProjects(userid);
+                ai.Tickets = db.Tickets.Where(t => t.DeveloperId == userid).ToList();
             }
-            else if (viewModel.UserRole == "Submitter")
+            else if (ai.Role == "Submitter")
             {
-                viewModel.Projects = projectHelper.ListUserProjects(userid);
-                viewModel.Tickets = db.Tickets.Where(t => t.SubmitterId == userid).ToList();
+                ai.Projects = projectHelper.ListUserProjects(userid);
+                ai.Tickets = db.Tickets.Where(t => t.SubmitterId == userid).ToList();
             }
 
-            return View(viewModel);
+            return View(ai);
             
         }
 

@@ -8,6 +8,7 @@
     var roleHelper = new RoleHelper();
     var userHelper = new UserHelper();
     var projectHelper = new ProjectHelper();
+    var projects = new List<Project>();
     ViewBag.Title = "Details";
 }
 
@@ -17,20 +18,16 @@
         padding-left: 10px;
         border-radius: 3px;
     }
-
     .topPad {
         padding-left: 10px
     }
-
     #ticket_Description {
         width: 100%;
         height: 10em
     }
-
     .formPad {
         padding-top: 2em
     }
-
     .dataTables_length {
         width: 50%;
         margin-bottom: -30px
@@ -38,33 +35,123 @@
 </style>
 
 <div>
-    <h1 class="topPad">Project Details</h1>
+    <h1 class="topPad">User</h1>
     <hr />
     <div class="row">
         <div class="col-lg-4">
             <div class="small-box bg-primary">
-                <h1 style="font-size:58px; padding:20px;">@Html.DisplayFor(model => model.User.FullName)</h1>
-                <h5 style="font-size:22px; padding:20px;">@Html.DisplayNameFor(model => model.User.Roles.FirstOrDefault())</h5>
-                <h5 style="font-size:22px; padding:20px;"></h5>
+                <header style="background-image:url(/Images/)">
+                </header>
+                <h1 style="font-size:50px; padding:20px;">@Html.DisplayFor(model => model.User.FullName)</h1><hr />
+                <h5 style="font-size:35px; padding:20px;">@Html.DisplayFor(model => model.Role)</h5>
+                @if (Model.Role == "Admin" || Model.Role == "ProjectManager")
+                {
+                    <h5 style="font-size:30px; padding:20px;">Oversees @Model.User.Projects.Count() Projects</h5>
+                    <h5 style="font-size:30px; padding:20px;padding-bottom:50px">Oversees @Model.Tickets.Count() Tickets</h5>
+                }
+                else
+                {
+                    <h5 style="font-size:30px; padding:20px;">@Model.User.Projects.Count() Projects</h5>
+                    <h5 style="font-size:30px; padding:20px;padding-bottom:50px">@Model.Tickets.Count() Tickets</h5>
+                }
+
             </div>
         </div>
         <div class="col-lg-8">
             <div class="small-box bg-gradient-success">
-                <h1 style="padding:20px; padding-bottom:5px">Project Team</h1><hr />
+                <h1 style="padding:20px; padding-bottom:10px">Projects</h1>
                 <div class="row">
                     <div class="col" style="padding:0px 30px 0px 30px">
-                        @Model.User.Projects.Count();
+                        @if (!roleHelper.IsUserInRole(Model.User.Id, "Admin"))
+                        {
+                            <table id="table_id2" class="table-bordered table bg-transparent dataTable">
+                                <thead>
+                                    <tr style="font-size:22px; font-weight:500;">
+                                        <th style="width:13em">
+                                            Project
+                                        </th>
+                                        <th style="width:13em">
+                                            Project Manager
+                                        </th>
+                                        <th style="width:5em">
+                                            Tickets
+                                        </th>
+                                        <th style="width:10em">
+                                            Created
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in Model.Projects)
+                                    {
+                                        <tr style="font-size:18px">
+                                            <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Projects", new {project.Id })'">
+                                                @project.Name
+                                            </td>
+                                            <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Index","Account", new {userid = projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().Id})'">
+                                                @projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().FullName
+                                            </td>
+                                            <td class="text-center" style="font-weight: bold">
+                                                @project.Tickets.Count()
+                                            </td>
+                                            <td class="text-center">
+                                                @project.Created.ToString("M/dd/yyy")
+                                            </td>
+                                        </tr>
+
+
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <table id="table_id2" class="table-bordered table bg-transparent dataTable">
+                                <thead>
+                                    <tr style="font-size:22px; font-weight:500;">
+                                        <th style="width:13em">
+                                            Project
+                                        </th>
+                                        <th style="width:13em">
+                                            Project Manager
+                                        </th>
+                                        <th style="width:5em">
+                                            Tickets
+                                        </th>
+                                        <th style="width:10em">
+                                            Created
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in Model.Projects)
+                                    {
+                                        <tr style="font-size:18px">
+                                            <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Projects", new {project.Id })'">
+                                                @project.Name
+                                            </td>
+                                            <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Index","Account", new {userid = projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().Id})'">
+                                                @projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().FullName
+                                            </td>
+                                            <td class="text-center" style="font-weight: bold">
+                                                @project.Tickets.Count()
+                                            </td>
+                                            <td class="text-center">
+                                                @project.Created.ToString("M/dd/yyy")
+                                            </td>
+                                        </tr>
+
+
+                                    }
+                                </tbody>
+                            </table>
+                        }
+
                     </div>
 
 
                 </div>
                 <div class="row" style="margin:0px; padding-top:1.5em; font-weight:300">
-                    <div class="col bg-success text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("ManageProjectUsers","Assignments", new { projectId = Model.project.Id })'">
-                        <h3 style="font-weight: 400; font-size:30px; padding-top:12px; padding-bottom:5px">Add</h3>
-                    </div>
-                    <div class="col bg-gradient-red text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("RemoveProjectUsers","Assignments", new { projectId = Model.project.Id })'">
-                        <h3 style="font-weight: 400; font-size:30px; padding-top:12px; padding-bottom:5px">Remove</h3>
-                    </div>
                 </div>
             </div>
         </div>
@@ -80,14 +167,8 @@
                     <table id="table_id" class="table-bordered table bg-transparent dataTable">
                         <thead>
                             <tr style="font-size:22px; font-weight:500;">
-                                @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.project.Id))
-                                {
-                                    <th>
-                                        Edit
-                                    </th>
-                                }
                                 <th style="width:12em">
-                                    Title
+                                    Issue
                                 </th>
                                 <th style="width:25em">
                                     Description
@@ -107,15 +188,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var ticket in Model.project.Tickets)
+                            @foreach (var ticket in Model.Tickets)
                             {
                                 <tr style="font-size:18px">
-                                    @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.project.Id))
-                                    {
-                                        <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Edit","Tickets", new {ticket.Id })'">
-                                            <a>Edit</a>
-                                        </td>
-                                    }
                                     <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
                                         @ticket.Title
                                     </td>
@@ -130,7 +205,7 @@
                                     }
                                     else
                                     {
-                                        <td>
+                                        <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Index","Account", new {userId = ticket.DeveloperId })'">
                                             @ticket.Developer.FullName
                                         </td>
                                     }
@@ -176,89 +251,17 @@
         </div>
     </div>
 </div>
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="modal fade" id="tmodal">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header text-center">
-                            <h2 class="modal-title w-100">New Ticket</h2>
-                        </div>
-                        <div class="modal-body">
-                            @using (Html.BeginForm("Create", "Tickets", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
-                            {
-                                @Html.AntiForgeryToken()
-
-                                <div class="form-horizontal">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                    @Html.Hidden("ProjectId", Model.project.Id)
-                                    <div class="container">
-                                        <div class="container">
-
-                                            <div class="form-group formPad">
-                                                @Html.LabelFor(model => model.ticket.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-                                                <div class="col-md-12">
-                                                    @Html.EditorFor(model => model.ticket.Title, new { htmlAttributes = new { @class = "form-control" } })
-                                                    @Html.ValidationMessageFor(model => model.ticket.Title, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group formPad">
-                                                @Html.LabelFor(model => model.ticket.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-                                                <div class="col-md-12">
-                                                    @Html.TextAreaFor(model => model.ticket.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                                    @Html.ValidationMessageFor(model => model.ticket.Description, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="container">
-                                        <div class="row formPad">
-                                            <div class="form-group col-4" style="font-weight:bold; padding-left:22px">
-                                                Priority<br />
-                                                @Html.DropDownList("TicketPriorityId")
-                                                @Html.ValidationMessageFor(model => model.ticket.TicketPriorityId, "", new { @class = "text-danger" })
-                                            </div>
-
-                                            <div class="form-group col-4" style="font-weight:bold; padding-left:18px">
-                                                Status<br />
-                                                @Html.DropDownList("TicketStatusId")
-                                                @Html.ValidationMessageFor(model => model.ticket.TicketStatusId, "", new { @class = "text-danger" })
-                                            </div>
-
-                                            <div class="form-group col-3" style="font-weight:bold">
-                                                Type<br />
-                                                @Html.DropDownList("TicketTypeId")
-                                                @Html.ValidationMessageFor(model => model.ticket.TicketTypeId, "", new { @class = "text-danger" })
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="form-group formPad">
-                                        <div class="col-12" style="padding-left: 20px">
-                                            <input type="submit" value="Create New Ticket" class="btn btn-primary" style="width:10em" />
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @section scripts{
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     <script>
         $(document).ready(function () {
             $('#table_id').DataTable();
         });
-        $(".ct").on("click", )
+        $(".ct").on("click")
+        $(document).ready(function () {
+            $('#table_id2').DataTable();
+        });
+        $(".ct").on("click")
     </script>
 
 }

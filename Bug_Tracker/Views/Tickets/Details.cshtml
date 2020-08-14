@@ -5,45 +5,46 @@
 @{
     ViewBag.Title = "Details";
     var projectHelper = new ProjectHelper();
+    var ticketHelper = new TicketHelper();
 }
 <style>
-    .margPad{
-        margin-top:40px;
-        padding-right:20px;
-        padding-left:20px;
-        border-radius:3px;
-        padding-top:8px;
-        padding-bottom:8px;
+    .margPad {
+        margin-top: 40px;
+        padding-right: 20px;
+        padding-left: 20px;
+        border-radius: 3px;
+        padding-top: 8px;
+        padding-bottom: 8px;
     }
 </style>
-    <div class="row">
-        <div class="col">
-            <h1 class="margPad"style="padding-left:10px">Ticket Details</h1>
-        </div>
-        <div class="col">
-            @if (Model.TicketPriority.Name == "URGENT")
-            {
-                <h1 class="float-lg-right margPad bg-red">URGENT Priority</h1>
-            }
-            @if (Model.TicketPriority.Name == "Low")
-            {
-                <h1 class="float-lg-right margPad bg-gradient-green">Low Priority</h1>
-            }
-            @if (Model.TicketPriority.Name == "Medium")
-            {
-                <h1 class="float-lg-right margPad bg-gradient-yellow">Medium Priority</h1>
-            }
-            @if (Model.TicketPriority.Name == "High")
-            {
-                <h1 class="float-lg-right margPad" style="background-color:#a10000; color:white">High Priority</h1>
-            }
-            @if (Model.TicketPriority.Name == "On Hold")
-            {
-                <h1 class="float-lg-right  margPad">On Hold</h1>
-            }
-        </div>
+
+<div class="row">
+    <div class="col">
+        <h1 class="margPad" style="padding-left:10px">Ticket Details</h1>
     </div>
-    
+    <div class="col">
+        @if (Model.TicketPriority.Name == "URGENT")
+        {
+            <h1 class="float-lg-right margPad bg-red">URGENT Priority</h1>
+        }
+        @if (Model.TicketPriority.Name == "Low")
+        {
+            <h1 class="float-lg-right margPad bg-gradient-green">Low Priority</h1>
+        }
+        @if (Model.TicketPriority.Name == "Medium")
+        {
+            <h1 class="float-lg-right margPad bg-gradient-yellow">Medium Priority</h1>
+        }
+        @if (Model.TicketPriority.Name == "High")
+        {
+            <h1 class="float-lg-right margPad" style="background-color:#a10000; color:white">High Priority</h1>
+        }
+        @if (Model.TicketPriority.Name == "On Hold")
+        {
+            <h1 class="float-lg-right  margPad">On Hold</h1>
+        }
+    </div>
+</div>
 
 <div class="row">
     <div class="col-lg-4">
@@ -82,4 +83,71 @@
             <h4 style="font-size:30px; padding:20px; padding-bottom:40px">@Model.Description</h4><hr />
         </div>
     </div>
+</div>
+<div class="row">
+    @if (Model.TicketComments.Count != 0)
+    {
+        <table class="table">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Comment
+                </th>
+                <th>
+                    Posted On
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model.TicketComments)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Created)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+
+        </table>
+    }
+    @if (ticketHelper.CanMakeComment(Model.Id))
+    {
+        using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <h4>TicketComment</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.Hidden("TicketId", Model.Id)
+                <div class="form-group">
+                    @Html.Label("Comment", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextArea("Comment", new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
 </div>

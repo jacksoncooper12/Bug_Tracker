@@ -23,7 +23,7 @@
     {
         <tr>
             <td>
-                <div onclick="location.href = '@Url.Action("Index", "Account", new { userid = user.Id })'">@Html.DisplayFor(modelItem => user.FullName)</div>
+                <div style="cursor:pointer" onclick="location.href = '@Url.Action("Index", "Account", new { userid = user.Id })'">@Html.DisplayFor(modelItem => user.FullName)</div>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => user.Email)
