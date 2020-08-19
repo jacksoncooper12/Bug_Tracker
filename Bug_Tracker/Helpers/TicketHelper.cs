@@ -13,29 +13,95 @@ namespace Bug_Tracker.Helpers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private RoleHelper roleHelper = new RoleHelper();
-        //public List<Ticket> GetMyTickets()
-        //{
-        //    var userId = HttpContext.Current.User.Identity.GetUserId();
-        //    var tickets = new List<Ticket>();
-        //    switch (myRole)
-        //    {
-        //        case "Admin":
-        //            model = db.Tickets.ToList();
-        //            break;
-        //        case "ProjectManager":
-        //        case "Developer":
-        //            model = projectHelper.ListUserProjects(userId).SelectMany(p => p.Tickets).ToList();
-        //            break;
+        private HistoriesHelper historyHelper = new HistoriesHelper();
+        private ProjectHelper projectHelper = new ProjectHelper();
+        public List<Ticket> GetMyTickets()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            var myRole = roleHelper.ListUserRoles(userId).FirstOrDefault();
+            var tickets = new List<Ticket>();
+            switch (myRole)
+            {
+                case "Admin":
+                    tickets = db.Tickets.ToList();
+                    return tickets;
+                case "ProjectManager":
+                    foreach (var item in projectHelper.ListUserProjects(userId))
+                    {
+                        foreach (var ticket in item.Tickets)
+                        {
+                            tickets.Append(ticket);
+                        }
+                    };
+                    return tickets;
+                case "Developer":
+                    tickets = projectHelper.ListUserProjects(userId).SelectMany(p => p.Tickets).ToList();
+                    return tickets;
 
-        //        case "Submitter":
-        //            model = db.Tickets.Where(t => t.SubmitterId == userId).ToList();
-        //            break;
+                case "Submitter":
+                    tickets = db.Tickets.Where(t => t.SubmitterId == userId).ToList();
+                    return tickets;
 
-        //        default:
-        //            return RedirectToAction("Index", "Home");
-        //    }
+                default:
+                    return null;
+            }
 
-        //}
+        }
+        public void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
+        {
+            if (oldTicket.DeveloperId != newTicket.DeveloperId && newTicket.DeveloperId != null && oldTicket.DeveloperId != null)
+            {
+                var notification = new TicketNotification()
+                {
+                    UserId = newTicket.DeveloperId,
+                    Created = DateTime.Now,
+                    TicketId = newTicket.Id,
+                    User = db.Users.Find(newTicket.DeveloperId),
+                    Message = $"You have been assigned to a Ticket"
+                };
+                db.TicketNotifications.Add(notification);
+                db.SaveChanges();
+                var notification2 = new TicketNotification()
+                {
+                    
+                    UserId = oldTicket.DeveloperId,
+                    Created = DateTime.Now,
+                    TicketId = oldTicket.Id,
+                    User = db.Users.Find(oldTicket.DeveloperId),
+                    Message = $"You have been removed from a Ticket"
+                };
+                db.TicketNotifications.Add(notification2);
+                db.SaveChanges();
+            }
+            else if (oldTicket.DeveloperId != newTicket.DeveloperId && newTicket.DeveloperId != null)
+            {
+                var notification = new TicketNotification()
+                {
+                    UserId = newTicket.DeveloperId,
+                    Created = DateTime.Now,
+                    TicketId = newTicket.Id,
+                    User = db.Users.Find(newTicket.DeveloperId),
+                    Message = $"You have been assigned to a Ticket"
+                };
+                db.TicketNotifications.Add(notification);
+                db.SaveChanges();
+            }
+            else if (oldTicket.DeveloperId != newTicket.DeveloperId && newTicket.DeveloperId == null)
+            {
+                var notification = new TicketNotification()
+                {
+                    UserId = oldTicket.DeveloperId,
+                    Created = DateTime.Now,
+                    TicketId = oldTicket.Id,
+                    User = db.Users.Find(oldTicket.DeveloperId),
+                    Message = $"You have been removed from a Ticket"
+                };
+                db.TicketNotifications.Add(notification);
+                db.SaveChanges();
+            }
+
+
+        }
         public bool CanEditTicket(int ticketId)
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
@@ -96,6 +162,11 @@ namespace Bug_Tracker.Helpers
                     return false;
             }
 
+        }
+        public void EditedTicket(Ticket oldTicket, Ticket newTicket)
+        {
+            historyHelper.ManageHistories(oldTicket, newTicket);
+            ManageTicketNotifications(oldTicket, newTicket);
         }
     }
 }

@@ -7,6 +7,10 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Bug_Tracker.Models;
+using Bug_Tracker.Helpers;
+using System.Web.Configuration;
+using System.IO;
+using Microsoft.Ajax.Utilities;
 
 namespace Bug_Tracker.Controllers
 {
@@ -15,6 +19,7 @@ namespace Bug_Tracker.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public ManageController()
         {
@@ -243,6 +248,26 @@ namespace Bug_Tracker.Controllers
             AddErrors(result);
             return View(model);
         }
+        
+        [HttpPost]
+        public ActionResult ChangeAvatar(HttpPostedFileBase file)
+        {
+            if (file != null)
+            {
+                if (ImageUploadValidator.IsWebFriendlyImage(file))
+                {
+                    var user = db.Users.Find(User.Identity.GetUserId());
+                    var fileName = FileStamp.MakeUnique(file.FileName);
+                    var serverFolder = WebConfigurationManager.AppSettings["DefaultServerFolder"];
+                    file.SaveAs(Path.Combine(Server.MapPath(serverFolder), fileName));
+                    user.AvatarPath = $"{serverFolder}{fileName}";
+                    db.SaveChanges();
+                }
+
+            }
+            return RedirectToAction("Index","Home");
+        }
+        
 
         //
         // GET: /Manage/SetPassword

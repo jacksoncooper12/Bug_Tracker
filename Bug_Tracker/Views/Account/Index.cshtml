@@ -2,12 +2,12 @@
 @using Bug_Tracker.Helpers
 @model AccountIndex
 @{
+    var projectHelper = new ProjectHelper();
     ViewBag.Title = "Index";
 }
 @{
     var roleHelper = new RoleHelper();
     var userHelper = new UserHelper();
-    var projectHelper = new ProjectHelper();
     var projects = new List<Project>();
     ViewBag.Title = "Details";
 }
@@ -18,19 +18,31 @@
         padding-left: 10px;
         border-radius: 3px;
     }
+
     .topPad {
         padding-left: 10px
     }
+
     #ticket_Description {
         width: 100%;
         height: 10em
     }
+
     .formPad {
         padding-top: 2em
     }
+
     .dataTables_length {
         width: 50%;
         margin-bottom: -30px
+    }
+
+    #table_id2_paginate {
+        margin-top: -25px
+    }
+
+    #table_id_paginate {
+        margin-top: -25px
     }
 </style>
 
@@ -39,11 +51,18 @@
     <hr />
     <div class="row">
         <div class="col-lg-4">
-            <div class="small-box bg-primary">
-                <header style="background-image:url(/Images/)">
-                </header>
-                <h1 style="font-size:50px; padding:20px;">@Html.DisplayFor(model => model.User.FullName)</h1><hr />
-                <h5 style="font-size:35px; padding:20px;">@Html.DisplayFor(model => model.Role)</h5>
+            <div class="small-box" style="background-color:cornflowerblue; color:white">
+                <h1 style="font-size:40px; padding:20px;"><img src="@Model.User.AvatarPath" width="90" class="img-circle" />    @Html.DisplayFor(model => model.User.FullName)</h1><hr />
+                <h5 style="font-size:35px; padding:20px;">
+                    @if (roleHelper.IsUserInRole(Model.User.Id, "ProjectManager"))
+                    {
+                        <span>Project Manager</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(model => model.Role)
+                    }
+                </h5>
                 @if (Model.Role == "Admin" || Model.Role == "ProjectManager")
                 {
                     <h5 style="font-size:30px; padding:20px;">Oversees @Model.User.Projects.Count() Projects</h5>
@@ -58,198 +77,153 @@
             </div>
         </div>
         <div class="col-lg-8">
-            <div class="small-box bg-gradient-success">
+            <div class="small-box" style="background-color:forestgreen; color:white">
                 <h1 style="padding:20px; padding-bottom:10px">Projects</h1>
                 <div class="row">
                     <div class="col" style="padding:0px 30px 0px 30px">
-                        @if (!roleHelper.IsUserInRole(Model.User.Id, "Admin"))
-                        {
-                            <table id="table_id2" class="table-bordered table bg-transparent dataTable">
-                                <thead>
-                                    <tr style="font-size:22px; font-weight:500;">
-                                        <th style="width:13em">
-                                            Project
-                                        </th>
-                                        <th style="width:13em">
-                                            Project Manager
-                                        </th>
-                                        <th style="width:5em">
-                                            Tickets
-                                        </th>
-                                        <th style="width:10em">
-                                            Created
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var project in Model.Projects)
-                                    {
-                                        <tr style="font-size:18px">
+                        <table id="table_id2" class="table-bordered table bg-transparent dataTable">
+                            <thead>
+                                <tr style="font-size:22px; font-weight:500;">
+                                    <th style="width:13em">
+                                        Project
+                                    </th>
+                                    <th style="width:13em">
+                                        Project Manager
+                                    </th>
+                                    <th style="width:5em">
+                                        Tickets
+                                    </th>
+                                    <th style="width:10em">
+                                        Created
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var project in projectHelper.ListUserProjects(Model.User.Id))
+                                {
+                                    <tr style="font-size:18px">
                                             <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Projects", new {project.Id })'">
                                                 @project.Name
                                             </td>
-                                            <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Index","Account", new {userid = projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().Id})'">
-                                                @projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().FullName
-                                            </td>
-                                            <td class="text-center" style="font-weight: bold">
-                                                @project.Tickets.Count()
-                                            </td>
-                                            <td class="text-center">
-                                                @project.Created.ToString("M/dd/yyy")
-                                            </td>
-                                        </tr>
-
-
-                                    }
-                                </tbody>
-                            </table>
-                        }
-                        else
-                        {
-                            <table id="table_id2" class="table-bordered table bg-transparent dataTable">
-                                <thead>
-                                    <tr style="font-size:22px; font-weight:500;">
-                                        <th style="width:13em">
-                                            Project
-                                        </th>
-                                        <th style="width:13em">
-                                            Project Manager
-                                        </th>
-                                        <th style="width:5em">
-                                            Tickets
-                                        </th>
-                                        <th style="width:10em">
-                                            Created
-                                        </th>
+                                        <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Index","Account", new {userid = projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().Id})'">
+                                            @projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().FullName
+                                        </td>
+                                        <td class="text-center" style="font-weight: bold">
+                                            @project.Tickets.Count()
+                                        </td>
+                                        <td class="text-center">
+                                            @project.Created.ToString("M/dd/yyy")
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var project in Model.Projects)
-                                    {
-                                        <tr style="font-size:18px">
-                                            <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Projects", new {project.Id })'">
-                                                @project.Name
-                                            </td>
-                                            <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Index","Account", new {userid = projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().Id})'">
-                                                @projectHelper.ListUsersOnProjectInRole(project.Id, "ProjectManager").FirstOrDefault().FullName
-                                            </td>
-                                            <td class="text-center" style="font-weight: bold">
-                                                @project.Tickets.Count()
-                                            </td>
-                                            <td class="text-center">
-                                                @project.Created.ToString("M/dd/yyy")
-                                            </td>
-                                        </tr>
-
-
-                                    }
-                                </tbody>
-                            </table>
-                        }
-
+                                }
+                            </tbody>
+                        </table>
                     </div>
-
-
                 </div>
                 <div class="row" style="margin:0px; padding-top:1.5em; font-weight:300">
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="small-box" style="padding:10px; background-color:#343a40; color:white">
-                <div class="row">
-                    <h1 style="padding: 20px; padding-bottom: 30px; margin-top: 8px;">Tickets</h1><hr />
-                    <h2 class="float-right ct" style="padding:20px; margin-bottom:30px; margin-top:8px; cursor:pointer" data-toggle="modal" data-target="#tmodal" @*onclick="window.location.href='@Url.Action("Create","Tickets", new { projectId = Model.Id })'"*@><i class="fa fa-edit" style="font-size:30px"> </i> New Ticket</h2>
-                </div>
-                <div style="padding:0px 10px 5px 10px;">
-                    <table id="table_id" class="table-bordered table bg-transparent dataTable">
-                        <thead>
-                            <tr style="font-size:22px; font-weight:500;">
-                                <th style="width:12em">
-                                    Issue
-                                </th>
-                                <th style="width:25em">
-                                    Description
-                                </th>
-                                <th style="width:7em">
-                                    Developer
-                                </th>
-                                <th style="width:7em">
-                                    Priority
-                                </th>
-                                <th style="width:7em">
-                                    Type
-                                </th>
-                                <th style="width:5em">
-                                    Status
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var ticket in Model.Tickets)
-                            {
-                                <tr style="font-size:18px">
-                                    <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
-                                        @ticket.Title
-                                    </td>
-                                    <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
-                                        @ticket.Description
-                                    </td>
-                                    @if (ticket.Developer == null)
-                                    {
-                                        <td>
-                                            No Developer
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Index","Account", new {userId = ticket.DeveloperId })'">
-                                            @ticket.Developer.FullName
-                                        </td>
-                                    }
+    @if (roleHelper.IsUserInRole(Model.User.Id, "Admin"))
+    {
+        <div></div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="small-box" style="padding:10px; background-color:#343a40; color:white">
+                    <div class="row">
+                        <h1 style="padding: 20px; padding-bottom: 30px; margin-top: 8px;">Tickets</h1><hr />
 
-                                    <td class="text-center">
-                                        @if (ticket.TicketPriority.Name == "URGENT")
-                                        {
-                                            <span class=" margPad bg-red">URGENT</span>
-                                        }
-                                        @if (ticket.TicketPriority.Name == "Low")
-                                        {
-                                            <span class="margPad bg-gradient-green">Low </span>
-                                        }
-                                        @if (ticket.TicketPriority.Name == "Medium")
-                                        {
-                                            <span class="margPad bg-gradient-yellow">Medium</span>
-                                        }
-                                        @if (ticket.TicketPriority.Name == "High")
-                                        {
-                                            <span class="margPad" style="background-color:#a10000; color:white">High </span>
-                                        }
-                                        @if (ticket.TicketPriority.Name == "On Hold")
-                                        {
-                                            <span class=" margPad">On Hold</span>
-                                        }
-
-                                    </td>
-                                    <td>
-                                        @ticket.TicketType.Name
-                                    </td>
-                                    <td>
-                                        @ticket.TicketStatus.Name
-                                    </td>
-
+                    </div>
+                    <div style="padding:0px 10px 5px 10px;">
+                        <table id="table_id" class="table-bordered table bg-transparent dataTable">
+                            <thead>
+                                <tr style="font-size:22px; font-weight:500;">
+                                    <th style="width:12em">
+                                        Issue
+                                    </th>
+                                    <th style="width:25em">
+                                        Description
+                                    </th>
+                                    <th style="width:7em">
+                                        Developer
+                                    </th>
+                                    <th style="width:7em">
+                                        Priority
+                                    </th>
+                                    <th style="width:7em">
+                                        Type
+                                    </th>
+                                    <th style="width:5em">
+                                        Status
+                                    </th>
                                 </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ticket in Model.Tickets)
+                                {
+                                    <tr style="font-size:18px">
+                                        <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
+                                            @ticket.Title
+                                        </td>
+                                        <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
+                                            @ticket.Description
+                                        </td>
+                                        @if (ticket.Developer == null)
+                                        {
+                                            <td>
+                                                No Developer
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Index","Account", new {userId = ticket.DeveloperId })'">
+                                                @ticket.Developer.FullName
+                                            </td>
+                                        }
 
+                                        <td class="text-center">
+                                            @if (ticket.TicketPriority.Name == "URGENT")
+                                            {
+                                                <span class=" margPad bg-red">URGENT</span>
+                                            }
+                                            @if (ticket.TicketPriority.Name == "Low")
+                                            {
+                                                <span class="margPad bg-gradient-green">Low </span>
+                                            }
+                                            @if (ticket.TicketPriority.Name == "Medium")
+                                            {
+                                                <span class="margPad bg-gradient-yellow">Medium</span>
+                                            }
+                                            @if (ticket.TicketPriority.Name == "High")
+                                            {
+                                                <span class="margPad" style="background-color:#a10000; color:white">High </span>
+                                            }
+                                            @if (ticket.TicketPriority.Name == "On Hold")
+                                            {
+                                                <span class=" margPad">On Hold</span>
+                                            }
 
-                            }
-                        </tbody>
-                    </table>
+                                        </td>
+                                        <td>
+                                            @ticket.TicketType.Name
+                                        </td>
+                                        <td>
+                                            @ticket.TicketStatus.Name
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
+
 </div>
 @section scripts{
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
@@ -259,7 +233,9 @@
         });
         $(".ct").on("click")
         $(document).ready(function () {
-            $('#table_id2').DataTable();
+            $('#table_id2').DataTable({
+                "pageLength": 5
+            });
         });
         $(".ct").on("click")
     </script>

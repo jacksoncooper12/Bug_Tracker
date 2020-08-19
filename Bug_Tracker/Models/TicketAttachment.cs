@@ -18,8 +18,8 @@ namespace Bug_Tracker.Models
         #endregion
 
         #region Actual Properties
+        public string FileName { get; set; }
         public string FilePath { get; set; }
-        public string Description { get; set; }
         public DateTime Created { get; set; } 
         #endregion
     }

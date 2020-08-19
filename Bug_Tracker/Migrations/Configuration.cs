@@ -40,6 +40,10 @@ namespace Bug_Tracker.Migrations
             {
                 roleManager.Create(new IdentityRole { Name = "Submitter" });
             }
+            if (!context.Roles.Any(r => r.Name == "Unassigned"))
+            {
+                roleManager.Create(new IdentityRole { Name = "Unassigned" });
+            }
 
             var userManager = new UserManager<ApplicationUser>(
                 new UserStore<ApplicationUser>(context));

@@ -46,7 +46,7 @@ namespace Bug_Tracker.Helpers
         {
             var user = db.Users.Find(userId);
             var projects = user.Projects.ToList();
-            return (projects);
+            return projects;
         }
         //remove one or more users from a project 
         public bool RemoveUserFromProject(string userId, int projectId)

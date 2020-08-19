@@ -12,11 +12,15 @@ namespace Bug_Tracker.Models
         public int TicketId { get; set; }
         public virtual Ticket Ticket { get; set; }
         public string UserId { get; set; }
+        
         public virtual ApplicationUser User { get; set; }
+
         #endregion
 
         #region Actual Properties
         public string Message { get; set; }
+        public bool IsRead { get; set; }
+        public DateTime Created { get; set; }
         #endregion
     }
 }

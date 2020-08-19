@@ -12,9 +12,26 @@ namespace Bug_Tracker.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private RoleHelper roleHelper = new RoleHelper();
+        private UserHelper userHelper = new UserHelper();
         // GET: Users
-        public ActionResult Index()
+        public ActionResult Index(string role)
         {
+            var users = db.Users.ToList();
+            if (role != null)
+            {
+                var sUsers = roleHelper.UsersInRole(role);
+                if (role == "ProjectManager")
+                {
+                    ViewBag.Role = "Project Manager";
+                }
+                else
+                {
+                    ViewBag.Role = role;
+                }
+
+                return View(sUsers);
+            }
+            ViewBag.Role = "All User";
             return View(db.Users.ToList());
         }
         public ActionResult ManageUserRole(string id)

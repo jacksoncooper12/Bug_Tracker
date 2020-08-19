@@ -19,6 +19,8 @@ namespace Bug_Tracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         private ProjectHelper projectHelper = new ProjectHelper();
         RoleHelper roleHelper = new RoleHelper();
+        TicketHelper ticketHelper = new TicketHelper();
+        private HistoriesHelper historyHelper = new HistoriesHelper();
 
         // GET: Tickets
         public ActionResult Index()
@@ -88,6 +90,15 @@ namespace Bug_Tracker.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Ticket ticket = db.Tickets.Find(id);
+            var user = db.Users.Find(User.Identity.GetUserId());
+            foreach(var notification in user.Notifications)
+            {
+                if(notification.TicketId == id)
+                {
+                    notification.IsRead = true;
+                    db.SaveChanges();
+                }
+            }
             if (ticket == null)
             {
                 return HttpNotFound();
@@ -138,11 +149,18 @@ namespace Bug_Tracker.Controllers
         }
 
         // GET: Tickets/Edit/5
-        [Authorize(Roles = "ProjectManager")]
+        [Authorize(Roles = "ProjectManager,Developer,Admin")]
         public ActionResult Edit(int id)
         {
-
             Ticket ticket = db.Tickets.Find(id);
+            if (User.IsInRole("Developer") || User.IsInRole("ProjectManager")){
+                if (!projectHelper.IsUserOnProject(User.Identity.GetUserId(), ticket.ProjectId))
+                {
+                    return RedirectToAction("index", "home");
+                }
+            }
+
+            
             var projectId = ticket.ProjectId;
             if (ticket == null)
             {
@@ -150,7 +168,7 @@ namespace Bug_Tracker.Controllers
             }
             ViewBag.DeveloperId = new SelectList(projectHelper.ListUsersOnProjectInRole(projectId, "Developer"), "Id", "FullName");
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
-            ViewBag.SubmitterId = new SelectList(db.Users, "Id", "FirstName", ticket.SubmitterId);
+            ViewBag.SubmitterId = new SelectList(projectHelper.ListUsersOnProjectInRole(projectId, "Submitter"), "Id", "FirstName", ticket.SubmitterId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
@@ -164,16 +182,18 @@ namespace Bug_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Description,Title,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
         {
-            var projectId = ticket.ProjectId;
+            
             if (ModelState.IsValid)
             {
+                var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
+                var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+
+                ticketHelper.EditedTicket(oldTicket, newTicket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             ViewBag.DeveloperId = new SelectList(db.Users, "Id", "FirstName", ticket.DeveloperId);
-            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
-            ViewBag.SubmitterId = new SelectList(db.Users, "Id", "FirstName", ticket.SubmitterId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);

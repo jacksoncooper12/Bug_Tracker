@@ -1,42 +1,164 @@
 ﻿@using Bug_Tracker.Helpers
-@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity;
+@using Bug_Tracker.Models;
+@model AccountIndex
 @{
     ViewBag.Title = "Home Page";
     var userHelper = new UserHelper();
+    var projectHelper = new ProjectHelper();
+    var ticketHelper = new TicketHelper();
+    var low = 0;
+    var medium = 0;
+    var high = 0;
+    var urgent = 0;
+    foreach (var ticket in Model.Tickets)
+    {
+
+        if (ticket.TicketPriority.Name == "Low")
+        {
+            low = low + 1;
+        }
+        if (ticket.TicketPriority.Name == "Medium")
+        {
+            medium = medium + 1;
+        }
+        if (ticket.TicketPriority.Name == "High")
+        {
+            high = high + 1;
+        }
+        if (ticket.TicketPriority.Name == "URGENT")
+        {
+            urgent = urgent + 1;
+        }
+    }
+
 }
+<style>
+    .dataTables_length {
+        width: 50%;
+        margin-bottom: -30px
+    }
+    #yondertable_paginate {
+        margin-top: -25px;
+        cursor: pointer
+    }
+</style>
+<div class="row" style="padding-top:5rem">
+    <div class="col-8">
+        <div class="small-box" style="padding:10px; background-color:#343a40; color:white;">
+            <div class="row" style="margin-bottom:20px; padding:20px">
+                <div class="col">
+                    <h1 style="margin-left:2rem">Tickets By Priority</h1>
+                    <div id="myChart">
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:-6em; margin-bottom:2rem">
+                <div class="col-2 offset-1" style="left:6.5rem">Low</div>
+                <div class="col-2" style="left:7rem">Medium</div>
+                <div class="col-2" style="left:8.5rem">High</div>
+                <div class="col-2" style="left:9rem">URGENT</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="small-box" style="padding:10px; background-color:#c6371c; color:white;">
+            <div class="row" style="margin-bottom:20px; padding:20px">
+                @if (User.IsInRole("ProjectManager"))
+                {
+                    <h2 style="margin-bottom:2rem !important">Unassigned Tickets</h2>
+                    <table class="table dataTable" id="yondertable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Ticket
+                                </th>
+                                <th>
+                                    Project
+                                </th>
+                                <th>
+                                    Priority
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ticket in Model.Tickets)
+                            {
+                                if (ticket.TicketStatus.Name == "Open")
+                                {
+                                    <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new { ticket.Id })'">
+                                        <td>
+                                            @ticket.Title
+                                        </td>
+                                        <td>
+                                            @ticket.Project.Name
+                                        </td>
+                                        <td>
+                                            @ticket.TicketPriority.Name
+                                        </td>
+                                    </tr>
+                                }
+
+                            }
+                        </tbody>
+                    </table>
+
+                }
+
+            </div>
+        </div>
+    </div>
 </div>
+@section scripts{
+    <script src="https://cdn.zingchart.com/zingchart.min.js" SameSite="None"></script>
+    <script>
+        $(document).ready(function () {
+            $('#yondertable').DataTable({
+                "pageLength": 5
+            });
+        });
+    var array = [@low,@medium,@high,@urgent]
+    function bar() {
+        zingchart.render({
+            id: "myChart",
+            output: "svg",
+            height: 400,
+            width: '100%',
+            data: {
+                type: "bar",
+                "background-color": "transparent",
+                'scale-y': {
+                    "tick": {
+                        "visible": false,
+                        "line-color": "none"
+                    }
+                },
+                'scale-x': {
+                    "visible": false,
+                },
 
-<div class="row">
-    <div class="col-md-4">
-        @if (User.IsInRole("Admin") || User.IsInRole("Developer") || User.IsInRole("ProjectManager"))
-        {
-            <h2>Hello @userHelper.GetFullName(User.Identity.GetUserId())</h2>
+                series: [
+                    {
+                        values: [@low],
+                        "background-color": "forestgreen"
+                    },
+                    {
+                        values: [@medium],
+                        "background-color": "cornflowerblue"
+                    },
+                    {
+                        values: [@high],
+                        "background-color": "#ffc107"
+                    },
+                    {
+                        values: [@urgent],
+                        "background-color": "#c6371c"
+                    },
+                ]
+            }
+        });
         }
-        else
-        {
-            <h2>YOU SHOULD NOT BLAH</h2>
-        }
-
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+        bar();
+    </script>
+}

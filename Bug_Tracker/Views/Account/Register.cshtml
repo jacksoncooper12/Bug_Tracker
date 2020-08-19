@@ -1,4 +1,4 @@
-﻿@model Bug_Tracker.Models.RegisterViewModel
+﻿@model Bug_Tracker.Models.ExtendedRegisterViewModel
 @{
     ViewBag.Title = "Register";
     Layout = null;
@@ -34,14 +34,14 @@
 <body>
 
     <div class="limiter">
-        <div class="container-login100">
-            <div class="wrap-login100">
+        <div class="container-login100" style="padding-bottom:-50px">
+            <div class="wrap-login100" >
                 <div class="login100-form-title" style="background-image: url(/Images/BG.jpg);">
                     <span class="login100-form-title-1">
                         Sign Up
                     </span>
                 </div>
-                @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
+                @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "login100-form validate-form", role = "form", enctype="multipart/form-data", @style="padding-bottom:40px;" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary("", new { @class = "text-danger" })
@@ -53,6 +53,11 @@
                     <div class="wrap-input100 validate-input m-b-26" data-validate="Last Name is required">
                         <span class="label-input100">Last Name</span>
                         @Html.TextBoxFor(m => m.LastName, new { @class = "input100" })
+                        <span class="focus-input100"></span>
+                    </div>
+                    <div class="wrap-input100 validate-input m-b-26" data-validate="Last Name is required" style="margin-bottom:10px !important; padding-top:0px">
+                        <span class="label-input100">Profile Picture</span>
+                        @Html.TextBoxFor(m => m.Avatar, new { type="file", @class = "btn", @style = "background-color:cornflowerblue; color:white; width:100%;"})
                         <span class="focus-input100"></span>
                     </div>
                     <div class="wrap-input100 validate-input m-b-26" data-validate="Email is required">

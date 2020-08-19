@@ -16,11 +16,65 @@
         padding-top: 8px;
         padding-bottom: 8px;
     }
-</style>
 
+    #Comment {
+        width: 100%;
+        background-color: transparent;
+        color: white;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-top-color: transparent;
+    }
+
+    #file-upload-button {
+        background-color: #343a40
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="modal fade ct" id="amodal">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content" style="background-color: rgba(52, 58, 64, 0.98); color:white">
+                        <div class="modal-header text-center" style=" ">
+                            <h2 class="modal-title w-100">Attachments</h2>
+                        </div>
+                        <div class="modal-body" style="height:35rem;">
+                            <div class="row">
+                                @foreach (var attachment in Model.TicketAttachments)
+                                {
+                                    var ext = Path.GetExtension(attachment.FilePath);
+                                    if (ext == ".png" || ext == ".jpg" || ext == ".gif" || ext == ".tiff" || ext == ".jpeg")
+                                    {
+                                        <div class="col">
+                                            <h5>@attachment.FileName (@attachment.User.FullName)</h5>
+                                            <img src="@attachment.FilePath" width="200" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span></span>
+                                    }
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col">
-        <h1 class="margPad" style="padding-left:10px">Ticket Details</h1>
+        @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.ProjectId) || User.IsInRole("Admin"))
+        {
+            <h4 class="margPad" style="font-size:40px; padding:20px; cursor:pointer; color:#343a40" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:38px"> </i> Edit Ticket</h4>
+        }
+        @if (User.IsInRole("Developer") && ticketHelper.CanEditTicket(Model.Id))
+        {
+            <h4 class="margPad" style="font-size:40px; padding:20px; cursor:pointer; color:#343a40" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:38px"> </i> Close Ticket</h4>
+        }
     </div>
     <div class="col">
         @if (Model.TicketPriority.Name == "URGENT")
@@ -48,106 +102,171 @@
 
 <div class="row">
     <div class="col-lg-4">
-        <div class="small-box bg-success">
-            <h1 style="font-size:58px; padding:20px;">@Model.Title</h1>
-            @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.ProjectId))
-            {
-                <h4 style="font-size:32px; padding:20px; cursor:pointer" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:30px"> </i> Edit Ticket</h4>
-            }
+        <div class="small-box" style="background-color:forestgreen; color:white">
+            <h1 style="padding:20px;">@Model.Title</h1>
+
             @if (Model.Developer == null)
             {
-                <h4 style="font-size:32px; padding:20px;">No Assigned Developer</h4>
+                <h4 style="font-size:32px; padding:20px">No Assigned Developer</h4>
             }
             else
             {
-                <h4 style="font-size:32px; padding:20px;">Developer: @Model.Developer.FullName</h4>
+                <div class="row">
+                    <div class="col">
+                        <h4 style="font-size:32px; padding:20px; padding-bottom:0; padding-top:0"><span style="padding-bottom:0; border-bottom:1px solid white">Developer</span></h4>
+                    </div>
+                </div>
+                <h4 style="font-size:32px; padding:20px; padding-bottom:20px; padding-top:5px"><img src="@Model.Developer.AvatarPath" class="img-circle" width="50" />  @Model.Developer.FullName</h4>
             }
             @if (Model.Submitter == null)
             {
-                <h4 style="font-size:32px; padding:20px; padding-bottom:40px">No Submitter</h4><hr />
+                <h4 style="font-size:32px; padding:20px; padding-bottom:20px">No Submitter</h4><hr />
             }
             else
             {
-                <h4 style="font-size:32px; padding:20px; padding-bottom:40px">Submitter: @Model.Submitter.FullName</h4><hr />
+                <div class="row" style="padding-bottom:0">
+                    <div class="col">
+                        <h4 style="font-size:32px; padding:20px; padding-bottom:0; padding-top:0"><span style="padding-bottom:0; border-bottom:1px solid white">Submitter</span></h4>
+                    </div>
+                </div>
+                <h4 style="font-size:32px; padding:20px; padding-bottom:40px; padding-top:5px"><img src="@Model.Submitter.AvatarPath" class="img-circle" width="50" />  @Model.Submitter.FullName</h4>
             }
-            <div class="text-center" style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Projects", new { id = Model.ProjectId })'">
-                <h4 style="font-size:28px;text-decoration:underline">Project</h4>
-                <h4 style="font-size:28px; padding-bottom:20px">@Model.Project.Name</h4>
+            <div class="row"style="padding-top:20px;">
+                <div class="col text-center"  style="border-right:1px solid white">
+                    <h4>@Model.Created.ToString("MM/dd/yyyy")</h4>
+                </div>
+                <div class="col" style=" padding-bottom: 20px">
+                    <div class="text-center" style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Projects", new { id = Model.ProjectId })'">
+                        <h4>Project</h4>
+                    </div>
+                </div>
             </div>
 
         </div>
     </div>
     <div class="col-lg-8">
-        <div class="small-box bg-gradient-primary">
+        <div class="small-box" style="background-color:cornflowerblue; color:white">
             <h1 style="padding:20px; padding-bottom:5px">Issue Description</h1><hr />
             <h4 style="font-size:30px; padding:20px; padding-bottom:40px">@Model.Description</h4><hr />
         </div>
     </div>
 </div>
 <div class="row">
-    @if (Model.TicketComments.Count != 0)
-    {
-        <table class="table">
-            <tr>
-                <th>
-                    Name
-                </th>
-                <th>
-                    Comment
-                </th>
-                <th>
-                    Posted On
-                </th>
-                <th></th>
-            </tr>
-
-            @foreach (var item in Model.TicketComments)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.User.FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Comment)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Created)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                        @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                    </td>
-                </tr>
-            }
-
-        </table>
-    }
-    @if (ticketHelper.CanMakeComment(Model.Id))
-    {
-        using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-
-            <div class="form-horizontal">
-                <h4>TicketComment</h4>
-                <hr />
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                @Html.Hidden("TicketId", Model.Id)
-                <div class="form-group">
-                    @Html.Label("Comment", htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.TextArea("Comment", new { htmlAttributes = new { @class = "form-control" } })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Create" class="btn btn-default" />
-                    </div>
+    <div class="col-lg-8">
+        <div class="small-box" style="padding:10px; background-color:#343a40; color:white;">
+            <div class="row" style="margin-bottom:20px; padding:20px">
+                <h1>Comments</h1>
+            </div>
+            <div class="row">
+                <div class="col">
+                    @if (Model.TicketComments.Count != 0)
+                    {
+                        foreach (var item in Model.TicketComments)
+                        {
+                            <div style="padding-left:20px; padding-right:20px; padding-bottom:10px; margin-top:-20px">
+                                <h5 style="color:cornflowerblue">@item.User.FullName<span class="float-right">@item.Created.ToString("M/dd/yyy")</span></h5>
+                                <h5>@item.Comment</h5><hr />
+                            </div>
+                        }
+                    }
                 </div>
             </div>
+
+            @if (ticketHelper.CanMakeComment(Model.Id))
+            {
+                using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="container">
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.Hidden("TicketId", Model.Id)
+                            <div class="form-group">
+                                @Html.Label("Comment", htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-12">
+                                    @Html.TextArea("Comment", new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Post" class="btn btn-default" style="width:40%; background-color:cornflowerblue" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+    @{
+        var help = 0;
+        foreach (var attachment1 in Model.TicketAttachments)
+        {
+            if (attachment1.FilePath.Contains(".jpg") || attachment1.FilePath.Contains(".jpeg") || attachment1.FilePath.Contains(".gif") || attachment1.FilePath.Contains(".tiff") || attachment1.FilePath.Contains(".png"))
+            {
+                help++;
+            }
         }
     }
+    <div class="col-lg-4">
+        <div class="small-box" style="padding:10px; background-color:#c6371c; color:white;">
+            <div class="row" style="margin-bottom:20px; padding:20px">
+                <div class="col-12">
+                    <div class="row" style="margin-bottom:20px">
+                        <div class="col-12">
+                            <h1 style="font-size:32px">Attachments<span class="float-right" data-toggle="modal" data-target="#amodal" style="font-size:25px;cursor:pointer; background-color:#343a40; padding:5px; padding-left:10px;padding-right:10px; border-radius:5px">View (@help)</span></h1>
+                        </div>
+                    </div>
+                    @foreach (var item in Model.TicketAttachments)
+                    {
+                        var ext = Path.GetExtension(item.FilePath);
+                        <div class="row">
+                            <div class="col-6">
+                                <span>@item.FileName (@ext)</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="float-right">@item.User.FullName</span>
+                            </div>
+                        </div><hr />
+
+                    }
+                    @if (ticketHelper.CanMakeComment(Model.Id))
+                    {
+                        using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("TicketId", Model.Id)
+                            <div class="form-group">
+                                @Html.Label("File Name", htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-12">
+                                    @Html.Editor("FileName", new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="file" name="file" id="file" />
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="submit" value="Add Attachment" class="btn-sm float-right" style="width:70%; height:30px; background-color:#343a40; color:white" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
 
 </div>
+@section scripts{
+
+}

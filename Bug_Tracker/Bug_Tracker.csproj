@@ -182,6 +182,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\FileStamp.cs" />
+    <Compile Include="Helpers\FileUploadValidator.cs" />
+    <Compile Include="Helpers\HistoriesHelper.cs" />
     <Compile Include="Helpers\ImageUploadValidator.cs" />
     <Compile Include="Helpers\ProjectHelper.cs" />
     <Compile Include="Helpers\RoleHelper.cs" />
@@ -217,6 +220,7 @@
   <ItemGroup>
     <Content Include="Avatars\blueuser.png" />
     <Content Include="Avatars\greenuser.png" />
+    <Content Include="Avatars\jamesharden.jpg" />
     <Content Include="Avatars\lightblueuser.png" />
     <Content Include="Avatars\orangeuser.png" />
     <Content Include="Avatars\pinkuser.png" />
@@ -238,6 +242,7 @@
     <Content Include="Content\main.css" />
     <Content Include="Content\select2.min.css" />
     <Content Include="Content\util.css" />
+    <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="Images\BG.jpg" />
     <Content Include="Images\icons\favicon.ico" />
@@ -254,7 +259,6 @@
     <Content Include="Content\OverlayScrollbars.min.css" />
     <Content Include="Content\summernote-bs4.css" />
     <Content Include="Content\tempusdominus-bootstrap-4.min.css" />
-    <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="private.config" />
@@ -266,8 +270,7 @@
     <Content Include="Scripts\jquery.knob.min.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jquery.overlayScrollbars.min.js" />
-    <Content Include="Scripts\jquery.vmap.min.js" />
-    <Content Include="Scripts\jquery.vmap.usa.js" />
+    <Content Include="Scripts\jquery.vmap.js" />
     <Content Include="Scripts\main.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\popper.js" />
@@ -404,6 +407,8 @@
     <Content Include="WebFonts\fa-solid-900.woff2" />
     <Content Include="Views\Assignments\RemoveProjectUsers.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\summernote-bs4.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008101648019_SeedTest.resx">

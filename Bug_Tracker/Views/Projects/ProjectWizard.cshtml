@@ -9,49 +9,139 @@
     </span>
 
 }
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+<style>
 
-    <div class="form-horizontal">
-        <h2 class="text-center topPad">Create New Project</h2>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-            </div>
+    .tabs {
+        position: relative;
+        margin: 3rem 0;
+        background: #1abc9c;
+        height: auto;
+        width:45rem;
+    }
+
+        .tabs::before,
+        .tabs::after {
+            content: "";
+            display: table;
+        }
+
+        .tabs::after {
+            clear: both;
+        }
+
+    .tab {
+        float: left;
+    }
+
+    .tab-switch {
+        display: none;
+    }
+
+    .tab-label {
+        position: relative;
+        display: block;
+        line-height: 2.75em;
+        height: 3em;
+        padding: 0 3em;
+        background: #1abc9c;
+        border-right: 0.125rem solid #16a085;
+        color: #fff;
+        cursor: pointer;
+        top: 0;
+        transition: all 0.25s;
+    }
+
+        .tab-label:hover {
+            top: -0.25rem;
+            transition: top 0.25s;
+        }
+
+    .tab-content {
+        height: 20rem;
+        position: absolute;
+        z-index: 1;
+        top: 2.75em;
+        left: 0;
+        padding: 1.618rem;
+        background: #fff;
+        color: #2c3e50;
+        border-bottom: 0.25rem solid #bdc3c7;
+        opacity: 0;
+        transition: all 0.35s;
+    }
+
+    .tab-switch:checked + .tab-label {
+        background: #fff;
+        color: #2c3e50;
+        border-bottom: 0;
+        border-right: 0.125rem solid #fff;
+        transition: all 0.35s;
+        z-index: 1;
+        top: -0.0625rem;
+    }
+
+    .tab-switch:checked + label + .tab-content {
+        z-index: 2;
+        opacity: 1;
+        transition: all 0.35s;
+    }
+</style>
+<div class="row">
+
+</div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="tabs">
+            <div class="tab">
+                    <input type="radio" name="css-tabs" id="tab-1" checked class="tab-switch">
+                    <label for="tab-1" class="tab-label">Tab One</label>
+                    <div class="tab-content" style="width:45rem !important">
+                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                            </div>
+
+                        @Html.LabelFor(model => model.ProjectManagerId, "Project Manager", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("ProjectManagerId", null, htmlAttributes: new { @class = "form-control" })
+                        </div>
+                </div>
+                </div>
+                <div class="tab">
+                    <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
+                    <label for="tab-2" class="tab-label">Tab Two</label>
+                    <div class="tab-content" style="width:45rem !important">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DeveloperIds, "Developers", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.ListBox("DeveloperIds", null, htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SubmitterIds, "Submitters", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.ListBox("SubmitterIds", null, htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab">
+                    <input type="radio" name="css-tabs" id="tab-3" class="tab-switch">
+                    <label for="tab-3" class="tab-label">Tab Three</label>
+                    <div class="tab-content" style="width:45rem !important">
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Create" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProjectManagerId, "ProjectManagerId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ProjectManagerId", null, htmlAttributes: new { @class = "form-control" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.DeveloperIds, "DeveloperIds", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.ListBox("DeveloperIds", null, htmlAttributes: new { @class = "form-control" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SubmitterIds, "SubmitterIds", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.ListBox("SubmitterIds", null, htmlAttributes: new { @class = "form-control" })
-            </div>
-        </div>
+    }
 
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
 

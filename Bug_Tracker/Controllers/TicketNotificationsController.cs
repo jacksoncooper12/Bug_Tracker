@@ -4,9 +4,11 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Web;
 using System.Web.Mvc;
 using Bug_Tracker.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Bug_Tracker.Controllers
 {
@@ -19,6 +21,21 @@ namespace Bug_Tracker.Controllers
         {
             var ticketNotifications = db.TicketNotifications.Include(t => t.Ticket).Include(t => t.User);
             return View(ticketNotifications.ToList());
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Flip()
+        {
+            var user = db.Users.Find(User.Identity.GetUserId());
+                foreach (var notification in user.Notifications)
+                {
+                    if (notification.IsRead == false)
+                    {
+                        notification.IsRead = true;
+                        db.SaveChanges();
+                    }
+                }
+            return RedirectToAction("Index","Home");
         }
 
         // GET: TicketNotifications/Details/5

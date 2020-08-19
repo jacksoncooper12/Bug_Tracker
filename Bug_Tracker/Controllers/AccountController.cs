@@ -12,6 +12,9 @@ using Bug_Tracker.Models;
 using System.Net.Mail;
 using System.Configuration;
 using Bug_Tracker.Helpers;
+using System.IO;
+using System.Web.Configuration;
+using System.Collections.Generic;
 
 namespace Bug_Tracker.Controllers
 {
@@ -25,7 +28,7 @@ namespace Bug_Tracker.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -37,9 +40,9 @@ namespace Bug_Tracker.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -87,7 +90,7 @@ namespace Bug_Tracker.Controllers
             }
 
             return View(ai);
-            
+
         }
 
         [HttpPost]
@@ -165,7 +168,7 @@ namespace Bug_Tracker.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -192,17 +195,32 @@ namespace Bug_Tracker.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(ExtendedRegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, AvatarPath = "/Avatars/purpleuser.png" };
+
+                if (model.Avatar != null)
+                {
+                    if (ImageUploadValidator.IsWebFriendlyImage(model.Avatar))
+                    {
+                        var fileName = FileStamp.MakeUnique(model.Avatar.FileName);
+                        var serverFolder = WebConfigurationManager.AppSettings["DefaultServerFolder"];
+                        model.Avatar.SaveAs(Path.Combine(Server.MapPath(serverFolder), fileName));
+                        user.AvatarPath = $"{serverFolder}{fileName}";
+                    }
+
+                }
                 var result = await UserManager.CreateAsync(user, model.Password);
+
                 if (result.Succeeded)
                 {
-
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    if (user.Roles.FirstOrDefault() == null)
+                    {
+                        roleHelper.AddUserToRole(user.Id, "Unassigned");
+                    }
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -225,7 +243,6 @@ namespace Bug_Tracker.Controllers
                         Console.WriteLine(ex.Message);
                         await Task.FromResult(0);
                     }
-
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -266,7 +283,7 @@ namespace Bug_Tracker.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null )
+                if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
@@ -344,9 +361,9 @@ namespace Bug_Tracker.Controllers
 
 
 
-    //
-    // GET: /Account/ForgotPasswordConfirmation
-    [AllowAnonymous]
+        //
+        // GET: /Account/ForgotPasswordConfirmation
+        [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
             return View();

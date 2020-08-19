@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Bug_Tracker.Helpers;
 using Bug_Tracker.Models;
 using Bug_Tracker.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace Bug_Tracker.Controllers
 {
@@ -22,7 +23,18 @@ namespace Bug_Tracker.Controllers
         // GET: Projects
         public ActionResult Index()
         {
-            return View(db.Projects.ToList());
+            if (!User.IsInRole("Admin"))
+            {
+                ViewBag.project = "All Projects";
+                var project = projectHelper.ListUserProjects(User.Identity.GetUserId());
+                return View(project);
+            }
+            else
+            {
+                ViewBag.project = "My Projects";
+                return View(db.Projects.ToList());
+            }
+
         }
 
         // GET: Projects/Details/5
@@ -104,7 +116,7 @@ namespace Bug_Tracker.Controllers
                 ViewBag.ProjectManagerId = new SelectList(roleHelper.UsersInRole("ProjectManager"), "Id", "FullName");
                 ViewBag.DeveloperIds = new MultiSelectList(roleHelper.UsersInRole("Developer"), "Id", "FullName");
                 ViewBag.SubmitterIds = new MultiSelectList(roleHelper.UsersInRole("Submitter"), "Id", "FullName");
-                return View(model);
+                return RedirectToAction("Index", "Home");
             }
             if (ModelState.IsValid)
             {
@@ -127,7 +139,7 @@ namespace Bug_Tracker.Controllers
 
                 }
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Projects", new { project.Id});
             }
             else
             {
@@ -163,6 +175,7 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 db.Entry(project).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

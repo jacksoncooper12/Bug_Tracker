@@ -1,4 +1,5 @@
 ﻿using Bug_Tracker.Models;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
@@ -37,8 +38,9 @@ namespace Bug_Tracker.Helpers
             var List = userManager.Users.ToList();
             foreach (var user in List)
             {
-                if (IsUserInRole(user.Id, roleName))
-                    resultList.Add(user);
+                    if (IsUserInRole(user.Id, roleName))
+                        resultList.Add(user);
+
             }
             return resultList;
         }
