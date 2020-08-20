@@ -120,7 +120,6 @@ namespace Bug_Tracker.Controllers
             {
                 return View(model);
             }
-
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
@@ -136,6 +135,25 @@ namespace Bug_Tracker.Controllers
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DemoLoginAsync(string emailKey, string returnUrl)
+        {
+            var email = WebConfigurationManager.AppSettings[emailKey];
+            var password = WebConfigurationManager.AppSettings["DemoPassword"];
+            var result = await SignInManager.PasswordSignInAsync(email, password, false, shouldLockout:false);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return RedirectToLocal(returnUrl);
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View();
             }
         }
 

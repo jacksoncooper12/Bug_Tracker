@@ -3,28 +3,37 @@
 @{
     ViewBag.Title = "ManageUserRole";
 }
-
-<h2>ManageUserRoles</h2>
-
-<div class="row">
-    <div class="col-3 text-center">
-        Managing role for @Model.FullName
+<div class="container" style="padding-top:6rem; max-width:40rem">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="small-box" style="padding:5rem; background-color:#343a40; color:white;">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h1>Managing Role For</h1>
+                        <h2 style="padding-top:2rem"> @Model.FullName</h2>
+                        <div class="row" style="padding-top:2rem">
+                            <div class="col text-center">
+                                <h4></h4>
+                            </div>
+                        </div>
+                        <div class="container" style="max-width:15rem">
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <div class="col">
+                                        @Html.DropDownList("RoleName", "-- Remove Role --")
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top:2.5rem">
+                                    <div class="col">
+                                        <button type="submit" style="width:60%; background-color:cornflowerblue;color:white" class="btn">Assign To Role</button>
+                                    </div>
+                                </div>
+                            }</div>
+                        </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    <div class="row">
-        <div class="col-3">
-            @Html.DropDownList("RoleName", "-- Remove Role --")
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-3">
-            <button type="submit" style="width:100%" class="btn btn-primary">Manage Role</button>
-        </div>
-    </div>
-}
-
-

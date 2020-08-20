@@ -7,6 +7,7 @@
     var userHelper = new UserHelper();
     var projectHelper = new ProjectHelper();
     var ticketHelper = new TicketHelper();
+    var roleHelper = new RoleHelper();
     var low = 0;
     var medium = 0;
     var high = 0;
@@ -36,19 +37,42 @@
 <style>
     .dataTables_length {
         width: 50%;
-        margin-bottom: -30px
+        margin-bottom: -27px; visibility:hidden
     }
+
     #yondertable_paginate {
         margin-top: -25px;
-        cursor: pointer
+        cursor: pointer;
+        visibility:hidden
+    }
+    #yondertable_filter{
+        visibility:hidden
+    }
+    #yondertable_info {
+        visibility:hidden
+    }
+
+    #heretable_paginate {
+        margin-top: -25px;
+        cursor: pointer;
+        visibility: hidden
+    }
+
+    #heretable_filter {
+        visibility: hidden
+    }
+
+    #heretable_info {
+        visibility: hidden
     }
 </style>
-<div class="row" style="padding-top:5rem">
+<h1 style="padding-top:3rem; color:#343a40">Welcome Back, @Model.User.FirstName</h1>
+<div class="row">
     <div class="col-8">
         <div class="small-box" style="padding:10px; background-color:#343a40; color:white;">
             <div class="row" style="margin-bottom:20px; padding:20px">
                 <div class="col">
-                    <h1 style="margin-left:2rem">Tickets By Priority</h1>
+                    <h1 style="margin-left:2rem; margin-bottom:-20px">Tickets By Priority</h1>
                     <div id="myChart">
 
                     </div>
@@ -63,11 +87,11 @@
         </div>
     </div>
     <div class="col">
-        <div class="small-box" style="padding:10px; background-color:#c6371c; color:white;">
+        <div class="small-box" style="padding:10px; background-color:#c6371c; color:white; padding-bottom:0">
             <div class="row" style="margin-bottom:20px; padding:20px">
                 @if (User.IsInRole("ProjectManager"))
                 {
-                    <h2 style="margin-bottom:2rem !important">Unassigned Tickets</h2>
+                    <h2 style="margin-bottom:0.5rem !important">Unassigned Tickets</h2>
                     <table class="table dataTable" id="yondertable">
                         <thead>
                             <tr>
@@ -83,29 +107,88 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var ticket in Model.Tickets)
+                            @foreach (var project in Model.Projects)
                             {
-                                if (ticket.TicketStatus.Name == "Open")
+                                foreach (var ticket in project.Tickets)
                                 {
-                                    <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new { ticket.Id })'">
-                                        <td>
-                                            @ticket.Title
-                                        </td>
-                                        <td>
-                                            @ticket.Project.Name
-                                        </td>
-                                        <td>
-                                            @ticket.TicketPriority.Name
-                                        </td>
-                                    </tr>
+                                    if (ticket.TicketStatus.Name == "Open")
+                                    {
+                                        <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new { ticket.Id })'">
+                                            <td>
+                                                @ticket.Title
+                                            </td>
+                                            <td>
+                                                @ticket.Project.Name
+                                            </td>
+                                            <td>
+                                                @ticket.TicketPriority.Name
+                                            </td>
+                                        </tr>
+                                    }
                                 }
-
                             }
                         </tbody>
                     </table>
-
                 }
-
+                @if (User.IsInRole("Admin"))
+                {
+                    <h2 style="margin-bottom:0.5rem !important">Unassigned Users</h2>
+                    <table class="table dataTable" id="yondertable">
+                        <thead>
+                            <tr>
+                                <th style="width:10rem">
+                                    Name
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in roleHelper.UsersInRole("Unassigned"))
+                            {
+                                <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("ManageUserRole","Users", new { user.Id })'">
+                                    <td>
+                                        <img src="@user.AvatarPath" width="30" class="img-circle" />
+                                        @user.FullName
+                                    </td>
+                                    <td>
+                                        @user.Email
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                @if (User.IsInRole("Developer") || User.IsInRole("Submitter"))
+                {
+                    <h2 style="margin-bottom:0.5rem !important">Recent Tickets</h2>
+                    <table class="table dataTable" id="heretable">
+                        <thead>
+                            <tr>
+                                <th style="width:15rem">
+                                    Issue
+                                </th>
+                                <th style="width:5rem">
+                                    Created
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ticket in Model.Tickets.OrderBy(d=>d.Created))
+                            {
+                                <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new { ticket.Id })'">
+                                    <td>
+                                        @ticket.Title
+                                    </td>
+                                    <td>
+                                        @ticket.Created.ToString("M/dd/yyyy")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
             </div>
         </div>
     </div>
@@ -116,6 +199,12 @@
         $(document).ready(function () {
             $('#yondertable').DataTable({
                 "pageLength": 5
+            });
+        });
+        $(document).ready(function () {
+            $('#heretable').DataTable({
+                "pageLength": 5,
+                "order": [[1,"desc"]]
             });
         });
     var array = [@low,@medium,@high,@urgent]

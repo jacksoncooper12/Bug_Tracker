@@ -12,6 +12,8 @@
     ViewBag.PM = new MultiSelectList(roleHelper.UsersInRole("ProjectManager"), "Id", "FullName");
     ViewBag.DeveloperIds = new MultiSelectList(roleHelper.UsersInRole("Developer"), "Id", "FullName");
     ViewBag.SubmitterIds = new MultiSelectList(roleHelper.UsersInRole("Submitter"), "Id", "FullName");
+    ViewBag.DeveloperIds2 = new MultiSelectList(roleHelper.UsersInRole("Developer"), "Id", "FullName");
+    ViewBag.SubmitterIds2 = new MultiSelectList(roleHelper.UsersInRole("Submitter"), "Id", "FullName");
     ViewBag.NoRole = new MultiSelectList(roleHelper.UsersInRole("Unassigned"), "Id", "FullName");
     ViewBag.RoleName = new SelectList(db.Roles, "Name", "Name");
     ViewBag.UserIds = new MultiSelectList(db.Users, "Id", "Email");
@@ -42,7 +44,6 @@
     <!-- Daterange picker -->
     <link href="~/Content/daterangepicker.css" rel="stylesheet" />
     <!-- summernote -->
-    <link href="~/Content/summernote-bs4.css" rel="stylesheet" />
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <link href="~/Content/dataTables.bootstrap4.css" rel="stylesheet" />
@@ -54,7 +55,10 @@
         #table_id8_length {
             margin-bottom: -30px
         }
-
+        #table_id8_paginate {
+            margin-top: -25px;
+            cursor: pointer;
+        }
         .try {
             display: flex;
             width: 100%;
@@ -99,6 +103,13 @@
         }
 
         #SubmitterIds {
+            height: 10rem
+        }
+        #DeveloperIds2 {
+            height: 10rem
+        }
+
+        #SubmitterIds2 {
             height: 10rem
         }
 
@@ -347,14 +358,14 @@
 
                                         <div class="col-sm-6">
                                             Developers
-                                            @Html.ListBox("DeveloperIds", null, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ListBox("DeveloperIds2", null, htmlAttributes: new { @class = "form-control" })
                                         </div>
                                     </div>
                                     <div class="row">
 
                                         <div class="col-sm-6">
                                             Submitters
-                                            @Html.ListBox("SubmitterIds", null, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ListBox("SubmitterIds2", null, htmlAttributes: new { @class = "form-control" })
                                         </div>
 
                                         <div class="col-sm-6">
@@ -448,7 +459,7 @@
                                     @using (Html.BeginForm("Flip", "TicketNotifications", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
                                     {
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn" style="background-color:cornflowerblue">Seen All</button>
+                                        <button type="submit" class="btn" style="background-color:cornflowerblue; margin-top:1rem">Seen All</button>
                                     }
                                 </div>
                             </div>

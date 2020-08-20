@@ -55,7 +55,7 @@ namespace Bug_Tracker.Controllers
                 roleHelper.AddUserToRole(id, roleName);
             }
             //now that the new role is assigned, redirect to the page from which they came
-            return RedirectToAction("ManageUserRole", new { id });
+            return RedirectToAction("Index", "Users");
         }
     }
 }

@@ -33,7 +33,73 @@
     <!--===============================================================================================-->
 </head>
 <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="modal fade ct" id="zmodal" style="margin-top:6.5rem">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content" style="background-color: rgba(52, 58, 64, 0.98); color:white">
+                            <div class="row">
+                                <div class="col-sm-12 text-center">
+                                    <h1 style="margin-top:4rem">Demo Login</h1>
+                                    @using (Html.BeginForm("DemoLoginAsync", "Account", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken();
+                                        @Html.Hidden("emailKey", "DemoDev1Email");
+                                        <div style="margin-top:2rem">
+                                            <button type="submit" class="btn btn-flat" style="color:white; background-color:cornflowerblue"><h2><i class="fa fa-address-card-o"></i> Admin</h2></button>
+                                        </div>
+                                    }
+                                    @using (Html.BeginForm("DemoLoginAsync", "Account", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken();
+                                        @Html.Hidden("emailKey", "DemoDev2Email");
+                                        <div style="margin-top:2rem">
+                                            <button type="submit" class="btn btn-flat" style="color:white; background-color:#ffc107"><h2><i class="fa fa-users"></i> Manager</h2></button>
+                                        </div>
+                                    }
+                                    @using (Html.BeginForm("DemoLoginAsync", "Account", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken();
+                                        @Html.Hidden("emailKey", "DemoDev3Email");
+                                        <div style="margin-top:2rem">
+                                            <button type="submit" class="btn btn-flat" style="color:white; background-color:#c6371c"><h2><i class="fa fa-usb"></i> Developer</h2></button>
+                                        </div>
+                                    }
+                                    @using (Html.BeginForm("DemoLoginAsync", "Account", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken();
+                                        @Html.Hidden("emailKey", "DemoDev4Email");
+                                        <div style="margin-top:2rem; margin-bottom:4rem">
+                                            <button type="submit" class="btn btn-flat" style="color:white; background-color:forestgreen"><h2><i class="fa fa-envelope"></i> Submitter</h2></button>
+                                        </div>
+                                    }
 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="modal fade ct" id="kmodal">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content" style="background-color: rgba(52, 58, 64, 0.98); color:white">
+                            <div class="row">
+                                <div class="col-sm-12 text-center">
+                                    <h1>3rd Party Login</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="limiter">
         <div class="container-login100">
             <div class="wrap-login100">
@@ -75,23 +141,38 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="container-login100-form-btn">
-                                <button class="login100-form-btn" type="submit" style="background-color:cornflowerblue">
+                                <button class="login100-form-btn" type="submit" style="background-color:cornflowerblue;font-weight:bold">
                                     Log In
                                 </button>
-
                             </div>
                         </div>
 
                         <div class="col-4" style="right:20px">
                             <div class="container-login100-form-btn">
-                                <button class="login100-form-btn float-lg-right" type="button" style="background-color:#03c03c; right:40px !important" onclick="window.location.href='@Url.Action("Register","Account")'">
+                                <button class="login100-form-btn float-lg-right" type="button" data-toggle="modal" data-target="#kmodal" style="background-color:#9e5ed6; right:40px !important;font-weight:bold;">
+                                    3rd Party Login
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:1.5rem">
+                        <div class="col-8">
+                            <div class="container-login100-form-btn">
+                                <button class="login100-form-btn" type="button" data-toggle="modal" data-target="#zmodal" style="background-color:#c6371c;font-weight:bold">
+                                    Demo Login
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-4" style="right:20px;">
+                            <div class="container-login100-form-btn">
+                                <button class="login100-form-btn float-lg-right" type="button" style="background-color:forestgreen; right:40px !important;font-weight:bold" onclick="window.location.href='@Url.Action("Register","Account")'">
                                     Sign Up
                                 </button>
                             </div>
                         </div>
                     </div>
                 }
-
             </div>
         </div>
     </div>

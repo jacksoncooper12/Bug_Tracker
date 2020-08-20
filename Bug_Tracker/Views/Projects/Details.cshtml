@@ -77,33 +77,38 @@
                 <h1 style="padding:20px; padding-bottom:5px">Project Team</h1><hr />
                 <div class="row">
                     <div class="col" style="padding:0px 30px 0px 30px">
-                        <table class="table-bordered table bg-transparent">
-                            <tr>
-                                <th>
-                                    <h2>Developers</h2>
-                                </th>
-                                <th>
-                                    <h2>Submitters</h2>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th>
-                                    @foreach (var user in projectHelper.ListUsersOnProjectInRole(Model.project.Id, "Developer"))
-                                    {
-                                        <div style="cursor:pointer;" @*onclick="window.location.href='@Url.Action("Index","Account", new { userid = user.Id })'"*@>
-                                            <h4><img src="@user.AvatarPath" class="img-circle" width="30" />  @user.FullName</h4>
-                                        </div>
-                                    }
-                                </th>
-                                <th>
-                                    @foreach (var user in projectHelper.ListUsersOnProjectInRole(Model.project.Id, "Submitter"))
-                                    {
-                                        <div style="cursor:pointer;" @*onclick="window.location.href='@Url.Action("Index","Account", new { userid = user.Id })'"*@>
-                                            <h4><img src="@user.AvatarPath" class="img-circle" width="30" />  @user.FullName</h4>
-                                        </div>
-                                    }
-                                </th>
-                            </tr>
+                        <table class="table bg-transparent">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <h2>Developers</h2>
+                                    </th>
+                                    <th>
+                                        <h2>Submitters</h2>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+                                    <td>
+                                        @foreach (var user in projectHelper.ListUsersOnProjectInRole(Model.project.Id, "Developer"))
+                                        {
+                                            <div style="cursor:pointer;" @*onclick="window.location.href='@Url.Action("Index","Account", new { userid = user.Id })'"*@>
+                                                <h4><img src="@user.AvatarPath" class="img-circle" width="30" />  @user.FullName</h4>
+                                            </div>
+                                        }
+                                    </td>
+                                    <th>
+                                        @foreach (var user in projectHelper.ListUsersOnProjectInRole(Model.project.Id, "Submitter"))
+                                        {
+                                            <div style="cursor:pointer;" @*onclick="window.location.href='@Url.Action("Index","Account", new { userid = user.Id })'"*@>
+                                                <h4><img src="@user.AvatarPath" class="img-circle" width="30" />  @user.FullName</h4>
+                                            </div>
+                                        }
+                                    </th>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -141,7 +146,7 @@
                                         Edit
                                     </th>
                                 }
-                                <th style="width:12em">
+                                <th style="width:10em">
                                     Issue
                                 </th>
                                 <th style="width:25em">
@@ -306,7 +311,9 @@
         $(document).ready(function () {
             $('#table_id').DataTable();
         });
-        $(".ct").on("click")
+        $(document).ready(function () {
+            $('#teamtable').DataTable();
+        });
     </script>
 
 }
