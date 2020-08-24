@@ -6,19 +6,42 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Bug_Tracker.Helpers;
 using Bug_Tracker.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Bug_Tracker.Controllers
 {
     public class TicketHistoriesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
+        private ProjectHelper projectHelper = new ProjectHelper();
+        RoleHelper roleHelper = new RoleHelper();
+        TicketHelper ticketHelper = new TicketHelper();
+        private HistoriesHelper historyHelper = new HistoriesHelper();
         // GET: TicketHistories
+        [Authorize (Roles = "Admin, ProjectManager")]
         public ActionResult Index()
         {
-            var ticketHistories = db.TicketHistories.Include(t => t.Ticket).Include(t => t.User);
-            return View(ticketHistories.ToList());
+            if (User.IsInRole("Admin"))
+            {
+                var ticketHistories  = db.TicketHistories.ToList();
+                return View(ticketHistories);
+            }
+            else
+            {
+                var ticketHistories = new List<TicketHistory>();
+                foreach(var stuff in db.TicketHistories.ToList())
+                {
+                    if (projectHelper.IsUserOnProject(User.Identity.GetUserId(), stuff.Ticket.ProjectId))
+                    {
+                        ticketHistories.Add(stuff);
+                    }
+                }
+                return View(ticketHistories);
+            }
+
+            
         }
 
         // GET: TicketHistories/Details/5

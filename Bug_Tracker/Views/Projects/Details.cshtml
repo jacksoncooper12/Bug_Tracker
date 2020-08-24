@@ -35,8 +35,7 @@
 </style>
 
 <div>
-    <h1 class="topPad">Project Details</h1>
-    <hr />
+    <h1 class="topPad" style="padding-top:0.8rem; color:#343a40">Project Details</h1>
     <div class="row">
         <div class="col-lg-4">
             <div class="small-box" style="background-color:forestgreen; color:white">
@@ -198,19 +197,19 @@
                                     <td class="text-center">
                                         @if (ticket.TicketPriority.Name == "URGENT")
                                         {
-                                            <span class=" margPad bg-red">URGENT</span>
+                                            <span class=" margPad" style="background-color:#c6371c; color:white">URGENT</span>
                                         }
                                         @if (ticket.TicketPriority.Name == "Low")
                                         {
-                                            <span class="margPad bg-gradient-green">Low </span>
+                                            <span class="margPad" style="background-color:forestgreen; color:white">Low </span>
                                         }
                                         @if (ticket.TicketPriority.Name == "Medium")
                                         {
-                                            <span class="margPad bg-gradient-yellow">Medium</span>
+                                            <span class="margPad" style="background-color:cornflowerblue; color:white">Medium</span>
                                         }
                                         @if (ticket.TicketPriority.Name == "High")
                                         {
-                                            <span class="margPad" style="background-color:#a10000; color:white">High </span>
+                                            <span class="margPad" style="background-color:#ffc107; color:#343a40">High </span>
                                         }
                                         @if (ticket.TicketPriority.Name == "On Hold")
                                         {
@@ -271,22 +270,21 @@
                                     </div>
                                     <div class="container">
                                         <div class="row formPad">
-                                            <div class="form-group col-4" style="font-weight:bold; padding-left:22px">
+                                            <div class="col-2" style="font-weight:bold; padding-left:22px">
                                                 Priority<br />
                                                 @Html.DropDownList("TicketPriorityId")
                                                 @Html.ValidationMessageFor(model => model.ticket.TicketPriorityId, "", new { @class = "text-danger" })
                                             </div>
 
-                                            <div class="form-group col-4" style="font-weight:bold; padding-left:18px">
-                                                Status<br />
-                                                @Html.DropDownList("TicketStatusId")
-                                                @Html.ValidationMessageFor(model => model.ticket.TicketStatusId, "", new { @class = "text-danger" })
-                                            </div>
-
-                                            <div class="form-group col-3" style="font-weight:bold">
+                                            <div class="form-group col-2" style="font-weight:bold">
                                                 Type<br />
                                                 @Html.DropDownList("TicketTypeId")
                                                 @Html.ValidationMessageFor(model => model.ticket.TicketTypeId, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group col-4" style="font-weight:bold; padding-left:18px; visibility:hidden">
+                                                Status<br />
+                                                @Html.DropDownList("TicketStatusId")
+                                                @Html.ValidationMessageFor(model => model.ticket.TicketStatusId, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
                                     </div>
@@ -306,7 +304,6 @@
     </div>
 </div>
 @section scripts{
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     <script>
         $(document).ready(function () {
             $('#table_id').DataTable();

@@ -19,6 +19,8 @@
     ViewBag.UserIds = new MultiSelectList(db.Users, "Id", "Email");
     var user = db.Users.Find(User.Identity.GetUserId());
     var count = user.Notifications.Where(g => g.IsRead == false).Count();
+    var count2 = user.Histories.Count();
+
 }
 
 <!DOCTYPE html>
@@ -46,7 +48,7 @@
     <!-- summernote -->
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-    <link href="~/Content/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
 
 </head>
@@ -55,10 +57,7 @@
         #table_id8_length {
             margin-bottom: -30px
         }
-        #table_id8_paginate {
-            margin-top: -25px;
-            cursor: pointer;
-        }
+
         .try {
             display: flex;
             width: 100%;
@@ -105,6 +104,7 @@
         #SubmitterIds {
             height: 10rem
         }
+
         #DeveloperIds2 {
             height: 10rem
         }
@@ -405,63 +405,76 @@
                                 </h2>
                             </div>
                             <div class="modal-body" style="height:40rem; padding:30px">
-                                <table id="table_id8" class="table-bordered table bg-transparent dataTable">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                Notification
-                                            </th>
-                                            <th>
-                                                Ticket
-                                            </th>
-                                            <th>
-                                                Priority
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var notification in user.Notifications.OrderByDescending(d => d.IsRead == false))
+                                @if (user.Notifications.Count() > 0)
+                                {
+                                    <table id="table_id8" class="table-bordered table bg-transparent dataTable">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Notification
+                                                </th>
+                                                <th>
+                                                    Ticket
+                                                </th>
+                                                <th>
+                                                    Priority
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var notification in user.Notifications.OrderByDescending(d => d.IsRead == false))
+                                            {
+                                                if (notification.IsRead == false)
+                                                {
+                                                    <tr style="cursor:pointer; color:cornflowerblue" onclick="window.location.href='@Url.Action("Details", "Tickets", new { notification.Ticket.Id })'">
+                                                        <td>
+                                                            @notification.Message
+                                                        </td>
+                                                        <td>
+                                                            @notification.Ticket.Title
+                                                        </td>
+                                                        <td>
+                                                            @notification.Ticket.TicketPriority.Name
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details", "Tickets", new { notification.Ticket.Id })'">
+                                                        <td>
+                                                            @notification.Message
+                                                        </td>
+                                                        <td>
+                                                            @notification.Ticket.Title
+                                                        </td>
+                                                        <td>
+                                                            @notification.Ticket.TicketPriority.Name
+                                                        </td>
+                                                        <td style="display:none">
+                                                            @notification.IsRead.ToString()
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                    <div>
+                                        @using (Html.BeginForm("Flip", "TicketNotifications", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
                                         {
-                                            if (notification.IsRead == false)
-                                            {
-                                                <tr style="cursor:pointer; color:cornflowerblue" onclick="window.location.href='@Url.Action("Details","Tickets", new {notification.Ticket.Id })'">
-                                                    <td>
-                                                        @notification.Message
-                                                    </td>
-                                                    <td>
-                                                        @notification.Ticket.Title
-                                                    </td>
-                                                    <td>
-                                                        @notification.Ticket.TicketPriority.Name
-                                                    </td>
-                                                </tr>
-                                            }
-                                            else
-                                            {
-                                                <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {notification.Ticket.Id })'">
-                                                    <td>
-                                                        @notification.Message
-                                                    </td>
-                                                    <td>
-                                                        @notification.Ticket.Title
-                                                    </td>
-                                                    <td>
-                                                        @notification.Ticket.TicketPriority.Name
-                                                    </td>
-                                                </tr>
-                                            }
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn" style="background-color:cornflowerblue; margin-top:1rem">Seen All</button>
                                         }
-
-                                    </tbody>
-
-                                </table>
-                                <div>
-                                    @using (Html.BeginForm("Flip", "TicketNotifications", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
-                                    {
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn" style="background-color:cornflowerblue; margin-top:1rem">Seen All</button>
-                                    }
-                                </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="row" style="margin-top:10rem">
+                                        <div class="col text-center">
+                                            <h2> You have not recieved any notifications <i class="fa fa-check-circle"></i> </h2>
+                                        </div>
+                                    </div>                                  
+                                }
                             </div>
                         </div>
                     </div>
@@ -471,40 +484,40 @@
         </div>
     </div>
     <div class="wrapper">
-        <nav class="main-header navbar navbar-expand navbar-light" style="font-size:23px; vertical-align:middle; background-color:transparent !important">
+        <nav class="main-header navbar navbar-expand navbar-light" style="font-size:23px; vertical-align:middle; background-color:#f4f6f9; border-bottom:none !important">
             <!-- Left navbar links -->
             <ul class="navbar-nav" style="vertical-align:middle">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href=@Url.Action("Index","Home") class="nav-link">Home</a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Contact</a>
                 </li>
             </ul>
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <!-- Notifications Dropdown Menu -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="modal" data-target="#xmodal" href="#">
-                        <i class="far fa-bell"></i>
-                        <span class="badge badge-warning navbar-badge">@count</span>
-                    </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-user"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        @Html.Action("_LoginPartial", "Home")
-                        <div class="dropdown-divider"></div>
-                    </div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" data-toggle="modal" data-target="#xmodal" href="#">
+                            <i class="far fa-bell"></i>
+                            <span class="badge badge-warning navbar-badge">@count</span>
+                        </a>
+                    </li>
 
-                </li>
-
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" data-toggle="dropdown" href="#">
+                            <i class="far fa-user"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                            @Html.Action("_LoginPartial", "Home")
+                            <div class="dropdown-divider"></div>
+                        </div>
+                    </li>
+                }
+                else
+                {
+                    <li style="visibility:hidden; max-height:10px"> @Html.Action("_LoginPartial", "Home")</li>
+                }
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -586,9 +599,11 @@
                                 <i class="nav-icon fas fa-ticket-alt"></i>
                                 <p>
                                     Tickets
+
                                 </p>
                             </a>
                         </li>
+
                         <li class="nav-item has-treeview">
                             <a href=@Url.Action("Index", "Users") class="nav-link">
                                 <i class="nav-icon fas fa-users"></i>
@@ -606,7 +621,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href=@Url.Action("Index","Users", new { role = "ProjectManager" }) class="nav-link">
-                                        <i class="fas fa-user nav-icon"></i>
+                                        <i class="fas fa-user-alt nav-icon"></i>
                                         <p>Managers</p>
                                     </a>
                                 </li>
@@ -656,9 +671,18 @@
                         }
                         else
                         {
-                            <li class="nav-item" style="background-color:cornflowerblue; margin-top:20em; margin-bottom:0em; border-radius:5px; cursor:pointer" data-toggle="modal" data-target="#pmodal">
+                            <li class="nav-item" style="background-color:forestgreen; cursor:pointer  ;margin-top:15em; border-radius:5px" data-toggle="modal" data-target="#xmodal">
+                                <a class="nav-link" style="padding-top:12px">
+                                    <i class="nav-icon fa fa-bell"></i>
+                                    <p style="color: white">
+                                        Notifications
+                                        <span class="text-sm-right" style="margin-left:3.5rem; background-color:#343a40; padding:0.1rem 0.5rem 0.1rem 0.5rem; border-radius:4px">@count</span>
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item" style="background-color:cornflowerblue;  margin-top:2em; border-radius:5px; cursor:pointer" data-toggle="modal" data-target="#pmodal">
                                 <a @*href="@Url.Action("Index","Manage", new { id = User.Identity.GetUserId() })"*@ class="nav-link" style="padding-top:10px;color: white">
-                                    <i class="nav-icon far fa-bookmark"></i>
+                                    <i class="nav-icon fa fa-user-cog"></i>
                                     <p style="color: white">
                                         Account
                                     </p>
@@ -666,7 +690,7 @@
                             </li>
                             <li class="nav-item" style="background-color:#c6371c; margin-top:2em; border-radius:5px">
                                 <a href="javascript:document.getElementById('logoutForm').submit()" class="nav-link" style="padding-top:12px">
-                                    <i class="nav-icon far fa-bookmark"></i>
+                                    <i class="nav-icon fa fa-sign-out-alt"></i>
                                     <p style="color: white">
                                         Log Off
                                     </p>
@@ -726,11 +750,14 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9">
 
     </script>
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
     <script>
         $(document).ready(function () {
             $('#table_id8').DataTable({
-                "pageLength": 5
+                "pageLength": 5,
+                "order": []
             });
 
         });

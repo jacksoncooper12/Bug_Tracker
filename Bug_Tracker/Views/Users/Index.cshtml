@@ -1,24 +1,21 @@
 ﻿@model IEnumerable<Bug_Tracker.Models.ApplicationUser>
 @{
-    
+
     ViewBag.Title = "Index";
     var roleHelper = new Bug_Tracker.Helpers.RoleHelper();
+    Bug_Tracker.Models.ApplicationDbContext db = new Bug_Tracker.Models.ApplicationDbContext();
 }
 <style>
     .dataTables_length {
         width: 50%;
         margin-bottom: -30px
     }
-    #thisone_paginate {
-        margin-top: -25px;
-        cursor:pointer
-    }
 </style>
-<div class="container" style="padding-top:3rem">
+<div class="container" style="padding-top:1rem">
     <div class="small-box" style="padding:3rem; background-color:#343a40; color:white">
         <div class="row">
             <div class="col">
-                <h1>@Html.Display("Role")<span>s</span></h1>
+                <h1 style="margin-bottom:2rem">@Html.Display("Role")<span>s</span></h1>
                 <table class="table dataTable" id="thisone">
                     <thead>
                         <tr>
@@ -43,34 +40,70 @@
                             {
                                 <tr style="cursor:pointer" onclick="location.href = '@Url.Action("Index", "Account", new { userid = user.Id })'">
                                     <td>
-                                        <div>@Html.DisplayFor(modelItem => user.FullName)</div>
+                                        <div><img src="@user.AvatarPath" class="img-circle" width="30" /> @Html.DisplayFor(modelItem => user.FullName)</div>
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => user.Email)
                                     </td>
-                                    <td>
-                                        @user.Projects.Count()
-                                    </td>
-                                    <td>
-                                        @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
-                                    </td>
+                                    @if (roleHelper.IsUserInRole(user.Id, "Admin"))
+                                    {
+                                        <td>
+                                            @db.Projects.Count()
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @user.Projects.Count()
+                                        </td>
+                                    }
+                                    @if (@roleHelper.ListUserRoles(user.Id).FirstOrDefault() == "ProjectManager")
+                                    {
+                                        <td>
+                                            Project Manager
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
+                                        </td>
+                                    }
                                 </tr>
                             }
                             else
                             {
                                 <tr>
                                     <td>
-                                        <div>@Html.DisplayFor(modelItem => user.FullName)</div>
+                                        <div><img src="@user.AvatarPath" class="img-circle" width="30" /> @Html.DisplayFor(modelItem => user.FullName)</div>
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => user.Email)
                                     </td>
-                                    <td>
-                                        @user.Projects.Count()
-                                    </td>
-                                    <td>
-                                        @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
-                                    </td>
+                                    @if (roleHelper.IsUserInRole(user.Id, "Admin"))
+                                    {
+                                        <td>
+                                            @db.Projects.Count()
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @user.Projects.Count()
+                                        </td>
+                                    }
+                                    @if (@roleHelper.ListUserRoles(user.Id).FirstOrDefault() == "ProjectManager")
+                                    {
+                                        <td>
+                                            Project Manager
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
+                                        </td>
+                                    }
                                 </tr>
                             }
 
@@ -83,7 +116,6 @@
     </div>
 </div>
 @section scripts{
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     <script>
         $(document).ready(function () {
             $('#thisone').DataTable();

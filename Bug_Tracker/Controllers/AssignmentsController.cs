@@ -27,7 +27,7 @@ namespace Bug_Tracker.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ManageRoles(List<string> PM, List<string> DeveloperIds, List<string> SubmitterIds, List<string> NoRole, string roleName)
+        public ActionResult ManageRoles(List<string> PM, List<string> DeveloperIds2, List<string> SubmitterIds2, List<string> NoRole, string roleName)
         {
             //Step 1: if anyone was selected, remove them from all of their roles
             var List = new List<string>();
@@ -35,13 +35,13 @@ namespace Bug_Tracker.Controllers
             {
                 List.AddRange(PM);
             }
-            if (DeveloperIds != null)
+            if (DeveloperIds2 != null)
             {
-                List.AddRange(DeveloperIds);
+                List.AddRange(DeveloperIds2);
             }
-            if (SubmitterIds != null)
+            if (SubmitterIds2 != null)
             {
-                List.AddRange(SubmitterIds);
+                List.AddRange(SubmitterIds2);
             }
             if(NoRole != null)
             {

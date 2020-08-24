@@ -185,11 +185,18 @@ namespace Bug_Tracker.Controllers
             
             if (ModelState.IsValid)
             {
+                if(ticket.DeveloperId != null)
+                {
+                    ticket.TicketStatusId = 2;
+                }
+                if (ticket.IsResolved == true)
+                {
+                    ticket.TicketStatusId = 3;
+                }
                 var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
                 var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-
                 ticketHelper.EditedTicket(oldTicket, newTicket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
@@ -199,7 +206,6 @@ namespace Bug_Tracker.Controllers
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
-
         // GET: Tickets/Delete/5
         public ActionResult Delete(int? id)
         {

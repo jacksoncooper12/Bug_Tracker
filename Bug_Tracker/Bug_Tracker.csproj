@@ -219,13 +219,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Avatars\blueuser.png" />
-    <Content Include="Avatars\greenuser.png" />
     <Content Include="Avatars\jamesharden.jpg" />
     <Content Include="Avatars\lightblueuser.png" />
-    <Content Include="Avatars\orangeuser.png" />
-    <Content Include="Avatars\pinkuser.png" />
     <Content Include="Avatars\purpleuser.png" />
-    <Content Include="Avatars\reduser.png" />
     <Content Include="Avatars\yellowuser.png" />
     <Content Include="Content\adminlte.css" />
     <Content Include="Content\all.css" />

@@ -30,12 +30,12 @@ namespace Bug_Tracker.Helpers
                     {
                         foreach (var ticket in item.Tickets)
                         {
-                            tickets.Append(ticket);
+                            tickets.Add(ticket);
                         }
                     };
                     return tickets;
                 case "Developer":
-                    tickets = projectHelper.ListUserProjects(userId).SelectMany(p => p.Tickets).ToList();
+                    tickets = db.Tickets.Where(t => t.DeveloperId == userId).ToList();
                     return tickets;
 
                 case "Submitter":
@@ -47,7 +47,20 @@ namespace Bug_Tracker.Helpers
             }
 
         }
-        public void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
+        public List<TicketComment> GetMyComments()
+        {
+            var tickets = GetMyTickets();
+            var comments = new List<TicketComment>();
+            foreach (var ticket in tickets)
+            {
+                foreach(var comment in ticket.TicketComments)
+                {
+                    comments.Add(comment);
+                }
+            }
+            return comments;
+        }
+            public void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
         {
             if (oldTicket.DeveloperId != newTicket.DeveloperId && newTicket.DeveloperId != null && oldTicket.DeveloperId != null)
             {
@@ -99,8 +112,19 @@ namespace Bug_Tracker.Helpers
                 db.TicketNotifications.Add(notification);
                 db.SaveChanges();
             }
-
-
+            if (oldTicket.TicketAttachments.Count() != newTicket.TicketAttachments.Count() && newTicket.DeveloperId != null)
+            {
+                var notification = new TicketNotification()
+                {
+                    UserId = newTicket.DeveloperId,
+                    Created = DateTime.Now,
+                    TicketId = newTicket.Id,
+                    User = db.Users.Find(newTicket.DeveloperId),
+                    Message = $"A new attachment has been added to one of your Tickets"
+                };
+                db.TicketNotifications.Add(notification);
+                db.SaveChanges();
+            }
         }
         public bool CanEditTicket(int ticketId)
         {

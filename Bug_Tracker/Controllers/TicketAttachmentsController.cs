@@ -47,7 +47,7 @@ namespace Bug_Tracker.Controllers
             ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName");
             return View();
         }
-
+        private TicketHelper ticketHelper = new TicketHelper();
         // POST: TicketAttachments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -57,6 +57,9 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                ticketAttachment.Ticket = db.Tickets.Find(ticketAttachment.TicketId);
+                var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketAttachment.TicketId);
+                db.Entry(ticketAttachment.Ticket).State = EntityState.Modified;
                 if (ticketAttachment.FileName == null)
                 {
                     TempData["Error"] = "You must supply a File Name of at least three characters";
@@ -78,6 +81,8 @@ namespace Bug_Tracker.Controllers
                     ticketAttachment.FilePath = $"{serverFolder}{fileName}";
                     db.TicketAttachments.Add(ticketAttachment);
                     db.SaveChanges();
+                    var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketAttachment.TicketId);
+                    ticketHelper.ManageTicketNotifications(oldTicket, newTicket);
                 }
 
                 return RedirectToAction("Details", "Tickets", new { id = ticketAttachment.TicketId });

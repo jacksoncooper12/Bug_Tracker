@@ -9,10 +9,11 @@
 }
 <style>
     .margPad {
-        margin-top: 40px;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
         padding-right: 20px;
         padding-left: 20px;
-        border-radius: 3px;
+        border-radius: 4px;
         padding-top: 8px;
         padding-bottom: 8px;
     }
@@ -69,29 +70,33 @@
     <div class="col">
         @if (User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.ProjectId) || User.IsInRole("Admin"))
         {
-            <h4 class="margPad" style="font-size:40px; padding:20px; cursor:pointer; color:#343a40" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:38px"> </i> Edit Ticket</h4>
+            <h4 class="margPad" style="font-size:40px; padding:15px; cursor:pointer; color:#343a40" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:38px"> </i> Edit Ticket</h4>
         }
         @if (User.IsInRole("Developer") && ticketHelper.CanEditTicket(Model.Id))
         {
-            <h4 class="margPad" style="font-size:40px; padding:20px; cursor:pointer; color:#343a40" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:38px"> </i> Close Ticket</h4>
+            <h4 class="margPad" style="font-size:40px; padding:15px; cursor:pointer; color:#343a40" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:38px"> </i> Close Ticket</h4>
+        }
+        @if (User.IsInRole("Submitter") || !ticketHelper.GetMyTickets().Any(g=>g.Id == Model.Id))
+        {
+            <h4 class="margPad" style="font-size:40px; padding:40px;color:#343a40"><i style="font-size:38px"> </i> </h4>
         }
     </div>
     <div class="col">
         @if (Model.TicketPriority.Name == "URGENT")
         {
-            <h1 class="float-lg-right margPad bg-red">URGENT Priority</h1>
+            <h1 class="float-lg-right margPad" style="background-color:#c6371c; color:white">URGENT Priority</h1>
         }
         @if (Model.TicketPriority.Name == "Low")
         {
-            <h1 class="float-lg-right margPad bg-gradient-green">Low Priority</h1>
+            <h1 class="float-lg-right margPad" style="background-color:forestgreen; color:white">Low Priority</h1>
         }
         @if (Model.TicketPriority.Name == "Medium")
         {
-            <h1 class="float-lg-right margPad bg-gradient-yellow">Medium Priority</h1>
+            <h1 class="float-lg-right margPad" style="background-color:cornflowerblue; color:white">Medium Priority</h1>
         }
         @if (Model.TicketPriority.Name == "High")
         {
-            <h1 class="float-lg-right margPad" style="background-color:#a10000; color:white">High Priority</h1>
+            <h1 class="float-lg-right margPad" style="background-color:#ffc107; color:#343a40">High Priority</h1>
         }
         @if (Model.TicketPriority.Name == "On Hold")
         {
@@ -99,7 +104,6 @@
         }
     </div>
 </div>
-
 <div class="row">
     <div class="col-lg-4">
         <div class="small-box" style="background-color:forestgreen; color:white">
@@ -131,8 +135,8 @@
                 </div>
                 <h4 style="font-size:32px; padding:20px; padding-bottom:40px; padding-top:5px"><img src="@Model.Submitter.AvatarPath" class="img-circle" width="50" />  @Model.Submitter.FullName</h4>
             }
-            <div class="row"style="padding-top:20px;">
-                <div class="col text-center"  style="border-right:1px solid white">
+            <div class="row" style="padding-top:20px;">
+                <div class="col text-center" style="border-right:1px solid white">
                     <h4>@Model.Created.ToString("MM/dd/yyyy")</h4>
                 </div>
                 <div class="col" style=" padding-bottom: 20px">

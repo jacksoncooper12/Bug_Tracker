@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNet.Identity;
 
 namespace Bug_Tracker.Helpers
 {
@@ -44,6 +45,11 @@ namespace Bug_Tracker.Helpers
         }
         public List<Project> ListUserProjects(string userId)
         {
+            if (roleHelper.IsUserInRole(userId, "Admin"))
+            {
+                var projects2 = db.Projects.ToList();
+                return projects2;
+            }
             var user = db.Users.Find(userId);
             var projects = user.Projects.ToList();
             return projects;

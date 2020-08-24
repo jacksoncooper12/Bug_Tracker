@@ -70,7 +70,7 @@ namespace Bug_Tracker.Controllers
             ai.Role = roleHelper.ListUserRoles(userid).FirstOrDefault();
             if (ai.Role == "Admin")
             {
-                ai.Projects = projectHelper.ListUserProjects(userid);
+                ai.Projects = ai.AllProjects;
                 ai.Tickets = db.Tickets.ToList();
             }
             else if (ai.Role == "ProjectManager")
