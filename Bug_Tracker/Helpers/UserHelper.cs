@@ -38,7 +38,14 @@ namespace Bug_Tracker.Helpers
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             var user = db.Users.Find(userId);
-            return user.AvatarPath;
+            if (user != null)
+            {
+                return user.AvatarPath;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

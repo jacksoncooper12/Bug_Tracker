@@ -20,7 +20,14 @@
                     <div class="small-box" style="padding:3rem; background-color:#343a40; color:white;">
                         <div class="row">
                             <div class="col text-center">
-                                <h2>Edit Ticket</h2>
+                                @if (!User.IsInRole("Developer"))
+                                {
+                                    <h2>Edit Ticket</h2>
+                                }
+                                else
+                                {
+                                    <h2>Close Ticket</h2>
+                                }
                             </div>
                         </div>
 
@@ -59,7 +66,7 @@
                                     @Html.ValidationMessageFor(model => model.TicketStatusId, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-4">
-                                    Ticked Type
+                                    Ticket Type
                                     @Html.DropDownList("TicketTypeId", null, htmlAttributes: new { @class = "form-control" })
                                     @Html.ValidationMessageFor(model => model.TicketTypeId, "", new { @class = "text-danger" })
                                 </div>
@@ -72,7 +79,7 @@
                                 </div>
                                 <div class="col-6">
                                     Developer
-                                    @Html.DropDownList("DeveloperId", null, "--No Developer--", htmlAttributes: new { @class = "form-control" })
+                                    @Html.DropDownList("DeveloperId", null, "--No Developer--" ,htmlAttributes: new { @class = "form-control" })
                                     @Html.ValidationMessageFor(model => model.DeveloperId, "", new { @class = "text-danger" })
                                 </div>
                             </div>

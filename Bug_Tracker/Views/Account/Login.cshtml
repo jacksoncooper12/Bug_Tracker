@@ -32,7 +32,7 @@
     <link href="~/Content/main.css" rel="stylesheet" />
     <!--===============================================================================================-->
 </head>
-<body>
+<body class="x">
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
@@ -83,36 +83,22 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="modal fade ct" id="kmodal">
-                    <div class="modal-dialog modal-md">
-                        <div class="modal-content" style="background-color: rgba(52, 58, 64, 0.98); color:white">
-                            <div class="row">
-                                <div class="col-sm-12 text-center">
-                                    <h1>3rd Party Login</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <div class="limiter">
+
         <div class="container-login100">
             <div class="wrap-login100">
-                <div class="login100-form-title" style="background-image: url(/Images/BG.jpg);">
-                    <span class="login100-form-title-1">
+                <div class="login100-form-title" style="background-image: url(/Images/BG.jpg); height:250px">
+                    <h1 style="font-weight:600; font-size:40px;color: white;"><span>Bug Tracker</span></h1>
+                    <h2 style="margin-top:1rem; color:white">
                         Sign In
-                    </span>
+                    </h2>
                 </div>
                 @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary("", new { @class = "text-danger" })
-                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+                    <div class="wrap-input100 validate-input m-b-26" data-validate="Email is required">
                         <span class="label-input100">Email</span>
                         @Html.TextBoxFor(m => m.Email, new { @class = "input100" })
                         <span class="focus-input100"></span>
@@ -124,7 +110,7 @@
                         <span class="focus-input100"></span>
                     </div>
 
-                    <div class="flex-sb-m w-full p-b-30">
+                    <div class="flex-sb-m w-full p-b-30" style="padding-top:1rem !important; margin-bottom:-1rem">
                         <div class="contact100-form-checkbox">
                             <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
                             <label class="label-checkbox100" for="ckb1">
@@ -133,13 +119,13 @@
                         </div>
 
                         <div>
-                            <a href="@Url.Action("ForgotPassword","Account")" class="txt1">
+                            <a href="@Url.Action("ForgotPassword", "Account")" class="txt1">
                                 Forgot Password?
                             </a>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-8">
+                        <div class="col-sm-6" style="padding-top:1.5rem">
                             <div class="container-login100-form-btn">
                                 <button class="login100-form-btn" type="submit" style="background-color:cornflowerblue;font-weight:bold">
                                     Log In
@@ -147,32 +133,33 @@
                             </div>
                         </div>
 
-                        <div class="col-4" style="right:20px">
+                        <div class="col-sm-6" style="padding-top:1.5rem">
                             <div class="container-login100-form-btn">
-                                <button class="login100-form-btn float-lg-right" type="button" data-toggle="modal" data-target="#kmodal" style="background-color:#9e5ed6; right:40px !important;font-weight:bold;">
-                                    3rd Party Login
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style="padding-top:1.5rem">
-                        <div class="col-8">
-                            <div class="container-login100-form-btn">
-                                <button class="login100-form-btn" type="button" data-toggle="modal" data-target="#zmodal" style="background-color:#c6371c;font-weight:bold">
-                                    Demo Login
-                                </button>
-                            </div>
-                        </div>
 
-                        <div class="col-4" style="right:20px;">
-                            <div class="container-login100-form-btn">
-                                <button class="login100-form-btn float-lg-right" type="button" style="background-color:forestgreen; right:40px !important;font-weight:bold" onclick="window.location.href='@Url.Action("Register","Account")'">
+                                <button class="login100-form-btn float-sm-right" type="button" style="background-color:forestgreen; right:3rem !important;font-weight:bold" onclick="window.location.href='@Url.Action("Register", "Account")'">
                                     Sign Up
                                 </button>
                             </div>
                         </div>
                     </div>
                 }
+                <div class="login100-form" style=" padding-top:0; margin-bottom:5.5rem">
+                    <div class="row">
+                        <div class="col-sm-6" style="padding-top:1.5rem">
+                            <div class="container-login100-form-btn">
+                                <button class="login100-form-btn" type="button" data-toggle="modal" data-target="#zmodal" style="background-color:#343a40;font-weight:bold">
+                                    Demo Login
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 text-center" style="padding-top:1.5rem">
+                            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

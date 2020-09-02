@@ -3,6 +3,7 @@
 @using Bug_Tracker.Models;
 @model AccountIndex
 @{
+
     ViewBag.Title = "Home Page";
     var userHelper = new UserHelper();
     var projectHelper = new ProjectHelper();
@@ -59,7 +60,6 @@
         total += 1;
     }
     int ticketUnres = total - ticketRes;
-
 }
 <style>
     .dataTables_length {
@@ -95,300 +95,312 @@
     #heretable_info {
         visibility: hidden
     }
+    #myChart-license-text {
+        display: none;
+        visibility: hidden;
+    }
+    #xchart-license-text {
+        display: none;
+        visibility: hidden;
+    }
 </style>
-<h1 style="padding-top:1rem; color:#343a40">Welcome Back, @Model.User.FirstName</h1>
-<div class="row">
-    <div class="col-8">
-        <div class="small-box" style="padding:10px; background-color:#343a40; color:white;">
-            <div class="row" style="margin-bottom:20px; padding:20px">
-                <div class="col">
-                    <h1 style="margin-left:2rem; margin-bottom:-20px">Tickets By Priority</h1>
-                    <div id="myChart">
+@if (User.IsInRole("Unassigned"))
+{
+    <div class="row">
+        <div class="col text-center">
+            <h1 style="margin-top:15rem">Please contact an Admin to be assigned a role.</h1>
+        </div>
+    </div>   
+}
+else
+{
+    <h1 style="padding-top:1rem; color:#343a40">Welcome Back, @Model.User.FirstName</h1>
+    <div class="row">
+        <div class="col-8">
+            <div class="small-box" style="padding:10px; background-color:#343a40; color:white;">
+                <div class="row" style="margin-bottom:20px; padding:20px">
+                    <div class="col">
+                        <h1 style="margin-left:2rem; margin-bottom:-20px">Tickets By Priority</h1>
+                        <div id="myChart">
 
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row" style="margin-top:-6em; margin-bottom:2rem">
-                <div class="col-2 offset-1" style="left:6.5rem">Low</div>
-                <div class="col-2" style="left:7rem">Medium</div>
-                <div class="col-2" style="left:8.5rem">High</div>
-                <div class="col-2" style="left:9rem">URGENT</div>
-            </div>
-        </div>
-        <div class="small-box" style="padding:10px; background-color:#343a40; color:white;">
-            <div class="row" style="margin-bottom:20px; padding:20px">
-                <div class="col">
-                    <h2 style="margin-bottom:4rem">Recent Comments</h2>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        foreach (var comment in ticketHelper.GetMyComments().OrderByDescending(a => a.Created).Take(6))
+            <div class="small-box" style="padding:10px; background-color:#343a40; color:white;">
+                <div class="row" style="margin-bottom:20px; padding:20px">
+                    <div class="col">
+                        <h2 style="margin-bottom:4rem">Recent Comments</h2>
+                        @if (User.IsInRole("Admin"))
                         {
-                            <div style="padding-left:20px; padding-right:20px; padding-bottom:10px; padding-top:10px;margin-top:-20px; cursor:pointer" onclick="window.location.href='@Url.Action("Details", "Tickets", new { comment.Ticket.Id })'">
-                                <h5 style="color:cornflowerblue"><img class="img-circle" src="@comment.User.AvatarPath" width="30" /> @comment.User.FullName (@comment.Created.ToString("M/dd/yyyy"))<span class="float-right">@comment.Ticket.Title</span></h5>
-                                <h5>@comment.Comment</h5><hr />
-                            </div>
+                            foreach (var comment in ticketHelper.GetMyComments().Where(g=>g.Ticket.IsArchived == false).OrderByDescending(a => a.Created).Take(6))
+                            {
+                                <div style="padding-left:20px; padding-right:20px; padding-bottom:10px; padding-top:10px;margin-top:-20px; cursor:pointer" onclick="window.location.href='@Url.Action("Details", "Tickets", new { comment.Ticket.Id })'">
+                                    <h5 style="color:cornflowerblue"><img class="img-circle" src="@comment.User.AvatarPath" width="30" /> @comment.User.FullName (@comment.Created.ToString("M/dd/yyyy"))<span class="float-right">@comment.Ticket.Title</span></h5>
+                                    <h5>@comment.Comment</h5><hr />
+                                </div>
+                            }
                         }
-                    }
-                    else
-                    {
-                        foreach (var comment in ticketHelper.GetMyComments().OrderByDescending(a => a.Created).Take(10))
+                        else
                         {
-                            <div style="padding-left:20px; padding-right:20px; padding-bottom:10px; padding-top:10px;margin-top:-20px; cursor:pointer" onclick="window.location.href='@Url.Action("Details", "Tickets", new { comment.Ticket.Id })'">
-                                <h5 style="color:cornflowerblue"><img class="img-circle" src="@comment.User.AvatarPath" width="30" /> @comment.User.FullName (@comment.Created.ToString("M/dd/yyyy"))<span class="float-right">@comment.Ticket.Title</span></h5>
-                                <h5>@comment.Comment</h5><hr />
-                            </div>
+                            foreach (var comment in ticketHelper.GetMyComments().Where(g => g.Ticket.IsArchived == false).OrderByDescending(a => a.Created).Take(10))
+                            {
+                                <div style="padding-left:20px; padding-right:20px; padding-bottom:10px; padding-top:10px;margin-top:-20px; cursor:pointer" onclick="window.location.href='@Url.Action("Details", "Tickets", new { comment.Ticket.Id })'">
+                                    <h5 style="color:cornflowerblue"><img class="img-circle" src="@comment.User.AvatarPath" width="30" /> @comment.User.FullName (@comment.Created.ToString("M/dd/yyyy"))<span class="float-right">@comment.Ticket.Title</span></h5>
+                                    <h5>@comment.Comment</h5><hr />
+                                </div>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col">
-        <div class="small-box" style="padding:10px; background-color:forestgreen; color:white; padding-bottom:0">
-            <div class="row" style="margin-bottom:20px; padding:20px">
-                @if (User.IsInRole("ProjectManager"))
-                {
-                    <h2 style="margin-bottom:0.5rem !important">Unassigned Tickets</h2>
-                    if (Model.Tickets.Any(g => g.TicketStatus.Name == "Open"))
+        <div class="col">
+            <div class="small-box" style="padding:10px; background-color:forestgreen; color:white; padding-bottom:0">
+                <div class="row" style="margin-bottom:20px; padding:20px">
+                    @if (User.IsInRole("ProjectManager"))
                     {
-                        <table class="table dataTable" id="yondertable">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Ticket
-                                    </th>
-                                    <th>
-                                        Project
-                                    </th>
-                                    <th>
-                                        Priority
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var project in Model.Projects)
-                                {
-                                    foreach (var ticket in project.Tickets)
+                        <h2 style="margin-bottom:0.5rem !important">Unassigned Tickets</h2>
+                        if (Model.Tickets.Any(g => g.DeveloperId == null))
+                        {
+                            <table class="table dataTable" id="yondertable">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Ticket
+                                        </th>
+                                        <th>
+                                            Type
+                                        </th>
+                                        <th>
+                                            Priority
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in Model.Projects)
                                     {
-                                        if (ticket.TicketStatus.Name == "Open")
+                                        foreach (var ticket in project.Tickets)
                                         {
-                                            <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details", "Tickets", new { ticket.Id })'">
-                                                <td>
-                                                    @ticket.Title
-                                                </td>
-                                                <td>
-                                                    @ticket.Project.Name
-                                                </td>
-                                                <td>
-                                                    @ticket.TicketPriority.Name
-                                                </td>
-                                            </tr>
+                                            if (ticket.DeveloperId == null)
+                                            {
+                                                <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details", "Tickets", new { ticket.Id })'">
+                                                    <td>
+                                                        @ticket.Title
+                                                    </td>
+                                                    <td>
+                                                        @ticket.TicketType.Name
+                                                    </td>
+                                                    <td>
+                                                        @ticket.TicketPriority.Name
+                                                    </td>
+                                                </tr>
+                                            }
                                         }
                                     }
-                                }
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <h4>All of your projects have been assigned developers  <i class="fa fa-check-circle"></i></h4>
+                        }
                     }
-                    else
+                    @if (User.IsInRole("Admin"))
                     {
-                        <h4>All of your projects have been assigned developers  <i class="fa fa-check-circle"></i></h4>
+                        <h2 style="margin-bottom:0.5rem !important">Unassigned Users</h2>
+                        if (roleHelper.UsersInRole("Unassigned").FirstOrDefault() != null)
+                        {
+                            <table class="table dataTable" id="yondertable">
+                                <thead>
+                                    <tr>
+                                        <th style="width:10rem">
+                                            Name
+                                        </th>
+                                        <th>
+                                            Email
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in roleHelper.UsersInRole("Unassigned"))
+                                    {
+                                        <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("ManageUserRole", "Users", new { user.Id })'">
+                                            <td>
+                                                <img src="@user.AvatarPath" width="30" class="img-circle" />
+                                                @user.FullName
+                                            </td>
+                                            <td>
+                                                @user.Email
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <h4>All users have been assigned to their roles. <i class="fa fa-check-circle"></i></h4>
+                        }
                     }
-                }
-                @if (User.IsInRole("Admin"))
-                {
-                    <h2 style="margin-bottom:0.5rem !important">Unassigned Users</h2>
-                    if (roleHelper.UsersInRole("Unassigned").FirstOrDefault() != null)
+                    @if (User.IsInRole("Developer") || User.IsInRole("Submitter"))
                     {
-                        <table class="table dataTable" id="yondertable">
+                        <h2 style="margin-bottom:0.5rem !important">Recent Tickets</h2>
+                        <table class="table dataTable" id="heretable" style="margin-top:1rem !important">
                             <thead>
                                 <tr>
-                                    <th style="width:10rem">
-                                        Name
+                                    <th style="width:15rem">
+                                        Issue
                                     </th>
-                                    <th>
-                                        Email
+                                    <th style="width:5rem">
+                                        Created
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var user in roleHelper.UsersInRole("Unassigned"))
+                                @foreach (var ticket in Model.Tickets.Where(g => g.IsArchived == false).OrderBy(d => d.Created))
                                 {
-                                    <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("ManageUserRole","Users", new { user.Id })'">
+                                    <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details", "Tickets", new { ticket.Id })'">
                                         <td>
-                                            <img src="@user.AvatarPath" width="30" class="img-circle" />
-                                            @user.FullName
+                                            @ticket.Title
                                         </td>
                                         <td>
-                                            @user.Email
+                                            @ticket.Created.ToString("M/dd/yyyy")
                                         </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     }
-                    else
-                    {
-                        <h4>All of your users have been assigned to their roles. <i class="fa fa-check-circle"></i></h4>
-                    }
-                }
-                @if (User.IsInRole("Developer") || User.IsInRole("Submitter"))
+                </div>
+            </div>
+            <div class="small-box" style="padding:10px; background-color:cornflowerblue; color:white;">
+                @if (User.IsInRole("ProjectManager") || User.IsInRole("Admin"))
                 {
-                    <h2 style="margin-bottom:0.5rem !important">Recent Tickets</h2>
-                    <table class="table dataTable" id="heretable" style="margin-top:1rem !important">
-                        <thead>
-                            <tr>
-                                <th style="width:15rem">
-                                    Issue
-                                </th>
-                                <th style="width:5rem">
-                                    Created
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var ticket in Model.Tickets.OrderBy(d => d.Created))
-                            {
-                                <tr style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new { ticket.Id })'">
-                                    <td>
-                                        @ticket.Title
-                                    </td>
-                                    <td>
-                                        @ticket.Created.ToString("M/dd/yyyy")
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                    <div class="row" style="margin-bottom: 0.5rem !important ; padding: 20px">
+                        <div class="col">
+                            <h2>Ticket Progression</h2>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:-8rem; margin-bottom:-4rem">
+                        <div class="col">
+                            <div id="xchart"></div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom:-1rem">
+                        <div class="col text-center">
+                            <h4>By Project</h4>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom:20px; padding:20px">
+                        <div class="col">
+                            <table class="table" style="font-size:20px">
+                                <thead>
+                                    <tr>
+                                        <th>Project</th>
+                                        <th class="text-center">Resolved %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in projectHelper.ListUserProjects(User.Identity.GetUserId()).Take(6))
+                                    {
+                                        if (project.Tickets.Count() > 0)
+                                        {
+                                            double numerator = project.Tickets.Where(t => t.ProjectId == project.Id).Where(t => t.IsResolved == true).Count();
+                                            double denominator = project.Tickets.Count();
+                                            double percentResolved = numerator / denominator;
+                                            percentResolved = percentResolved * 100;
+                                            percentResolved = Math.Round(percentResolved, 2);
+                                            <tr onclick="window.location.href='@Url.Action("Details", "Projects", new { project.Id })'" style="cursor:pointer">
+                                                <td>@project.Name</td>
+                                                <td class="text-center">@percentResolved.ToString()</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row" style="margin-bottom: 0.5rem !important ; padding: 20px">
+                        <div class="col">
+                            <h2>Ticket Progression</h2>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:-8rem; margin-bottom:-5rem">
+                        <div class="col">
+                            <div id="zchart"></div>
+                        </div>
+                    </div>
                 }
             </div>
-        </div>
-        <div class="small-box" style="padding:10px; background-color:cornflowerblue; color:white;">
-            @if (User.IsInRole("ProjectManager") || User.IsInRole("Admin"))
+            @if (User.IsInRole("Developer") || User.IsInRole("Submitter") || User.IsInRole("ProjectManager"))
             {
-                <div class="row" style="margin-bottom: 0.5rem !important ; padding: 20px">
-                    <div class="col">
-                        <h2>Ticket Progression</h2>
+                <div class="small-box" style="padding:10px; background-color:#9e5ed6; color:white;">
+                    <div class="row" style="padding:20px">
+                        <div class="col">
+                            <h2>Recent Attachments</h2>
+                        </div>
                     </div>
-                </div>
-                <div class="row" style="margin-top:-8rem; margin-bottom:-4rem">
-                    <div class="col">
-                        <div id="xchart"></div>
-                    </div>
-                </div>
-                <div class="row" style="margin-bottom:-1rem">
-                    <div class="col text-center">
-                        <h4>By Project</h4>
-                    </div>
-                </div>
-                <div class="row" style="margin-bottom:20px; padding:20px">
-                    <div class="col">
-                        <table class="table" style="font-size:20px">
-                            <thead>
-                                <tr>
-                                    <th>Project</th>
-                                    <th class="text-center">Resolved %</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var project in projectHelper.ListUserProjects(User.Identity.GetUserId()).Take(6))
-                                {
-                                    if (project.Tickets.Count() > 0)
-                                    {
-                                        double numerator = project.Tickets.Where(t => t.ProjectId == project.Id).Where(t => t.IsResolved == true).Count();
-                                        double denominator = project.Tickets.Count();
-                                        double percentResolved = numerator / denominator;
-                                        percentResolved = percentResolved * 100;
-                                        percentResolved = Math.Round(percentResolved, 2);
-                                        <tr onclick="window.location.href='@Url.Action("Details","Projects", new { project.Id})'" style="cursor:pointer">
-                                            <td>@project.Name</td>
-                                            <td class="text-center">@percentResolved.ToString()</td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="row" style="margin-bottom: 0.5rem !important ; padding: 20px">
-                    <div class="col">
-                        <h2>Ticket Progression</h2>
-                    </div>
-                </div>
-                <div class="row" style="margin-top:-8rem; margin-bottom:-5rem">
-                    <div class="col">
-                        <div id="zchart"></div>
+                    <div class="row" style="margin-bottom: 0.5rem !important ; padding: 20px">
+                        @foreach (var image in ticketHelper.GetMyTickets().SelectMany(g => g.TicketAttachments).OrderByDescending(b => b.Created).Take(4))
+                        {
+                            var ext = Path.GetExtension(image.FilePath);
+                            if (ext == ".png" || ext == ".jpg" || ext == ".gif" || ext == ".tiff" || ext == ".jpeg")
+                            {
+                                <div class="col-6" onclick="window.location.href='@Url.Action("Details", "Tickets", new { image.Ticket.Id })'" style="cursor:pointer; padding-bottom:1rem">
+                                    <p>@image.Ticket.Title (@image.User.FullName)</p>
+                                    <img src="@image.FilePath" width="150" />
+                                </div>
+                            }
+                            else
+                            {
+                                <span></span>
+                            }
+                        }
                     </div>
                 </div>
             }
         </div>
-        @if (User.IsInRole("Developer") || User.IsInRole("Submitter") || User.IsInRole("ProjectManager"))
-        {
-            <div class="small-box" style="padding:10px; background-color:#9e5ed6; color:white;">
-                <div class="row" style="padding:20px">
-                    <div class="col">
-                        <h2>Recent Attachments</h2>
-                    </div>
-                </div>
-                <div class="row" style="margin-bottom: 0.5rem !important ; padding: 20px">
-                    @foreach (var image in ticketHelper.GetMyTickets().SelectMany(g => g.TicketAttachments).OrderByDescending(b => b.Created).Take(4))
-                    {
-                        var ext = Path.GetExtension(image.FilePath);
-                        if (ext == ".png" || ext == ".jpg" || ext == ".gif" || ext == ".tiff" || ext == ".jpeg")
-                        {
-                            <div class="col-6" onclick="window.location.href='@Url.Action("Details","Tickets", new { image.Ticket.Id })'" style="cursor:pointer; padding-bottom:1rem">
-                                <p>@image.Ticket.Title (@image.User.FullName)</p>
-                                <img src="@image.FilePath" width="150" />
-                            </div>
-                        }
-                        else
-                        {
-                            <span></span>
-                        }
-                    }
-                </div>
-            </div>
-        }
     </div>
-</div>
-@if (User.IsInRole("Admin"))
-{
-    <div class="row">
-        <div class="col">
-            <div class="small-box" style="padding:10px; background-color:#9e5ed6; color:white;">
-                <div class="row" style="padding:20px">
-                    <div class="col">
-                        <h2>Recent Attachments</h2>
+    if (User.IsInRole("Admin"))
+    {
+        <div class="row">
+            <div class="col">
+                <div class="small-box" style="padding:10px; background-color:#9e5ed6; color:white;">
+                    <div class="row" style="padding:20px">
+                        <div class="col">
+                            <h2>Recent Attachments</h2>
+                        </div>
                     </div>
-                </div>
-                <div class="row" style="margin-bottom: 0.5rem !important ; padding: 20px">
-                    @foreach (var image in db.TicketAttachments.ToList().OrderByDescending(b => b.Created).Take(8))
-                    {
-                        var ext = Path.GetExtension(image.FilePath);
-                        if (ext == ".png" || ext == ".jpg" || ext == ".gif" || ext == ".tiff" || ext == ".jpeg")
+                    <div class="row" style="margin-bottom: 0.5rem !important ; padding: 20px">
+                        @foreach (var image in db.TicketAttachments.ToList().OrderByDescending(b => b.Created).Take(8))
                         {
-                            <div class="col-3" onclick="window.location.href='@Url.Action("Details","Tickets", new { image.Ticket.Id })'" style="cursor:pointer; padding-bottom:1rem">
-                                <p>@image.Ticket.Title (@image.User.FullName)</p>
-                                <img src="@image.FilePath" width="200" />
-                            </div>
+                            var ext = Path.GetExtension(image.FilePath);
+                            if (ext == ".png" || ext == ".jpg" || ext == ".gif" || ext == ".tiff" || ext == ".jpeg")
+                            {
+                                <div class="col-3" onclick="window.location.href='@Url.Action("Details", "Tickets", new { image.Ticket.Id })'" style="cursor:pointer; padding-bottom:1rem">
+                                    <p>@image.Ticket.Title (@image.User.FullName)</p>
+                                    <img src="@image.FilePath" width="200" />
+                                </div>
+                            }
+                            else
+                            {
+                                <span></span>
+                            }
                         }
-                        else
-                        {
-                            <span></span>
-                        }
-                    }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-}
+    }
 
-@section scripts{
-    <script src="https://cdn.zingchart.com/zingchart.min.js" SameSite="None"></script>
-    <script>
+    @section scripts{
+        <script src="https://cdn.zingchart.com/zingchart.min.js" SameSite="None"></script>
+        <script>
 
         $(document).ready(function () {
             $('#yondertable').DataTable({
@@ -411,6 +423,13 @@
             width: '100%',
             data: {
                 type: "bar",
+                plot: {
+                    fillType: 'none',
+                    hoverstate: {
+                        visible: false,
+                    },
+                    styles: ["#228B22", "#6495ED", "#ffc107", "#c6371c"],
+                },
                 "background-color": "transparent",
                 'scale-y': {
                     "tick": {
@@ -418,26 +437,21 @@
                         "line-color": "none"
                     }
                 },
-                'scale-x': {
-                    "visible": false,
+                scaleX: {    
+                    label: {
+                        text: " "
+                    },
+                    labels: 
+                        [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "URGENT"
+                        ]                   
                 },
-
-                series: [
+                "series": [
                     {
-                        values: [@low],
-                        "background-color": "forestgreen"
-                    },
-                    {
-                        values: [@medium],
-                        "background-color": "cornflowerblue"
-                    },
-                    {
-                        values: [@high],
-                        "background-color": "#ffc107"
-                    },
-                    {
-                        values: [@urgent],
-                        "background-color": "#c6371c"
+                        values: [@low, @medium, @high, @urgent],
                     },
                 ]
             }
@@ -525,5 +539,8 @@
         });
         bar();
 
-    </script>
+        </script>
+    }
+
 }
+

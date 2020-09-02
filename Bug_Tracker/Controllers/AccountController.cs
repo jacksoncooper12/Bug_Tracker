@@ -231,14 +231,13 @@ namespace Bug_Tracker.Controllers
 
                 }
                 var result = await UserManager.CreateAsync(user, model.Password);
-
+                if (user.Roles.FirstOrDefault() == null)
+                {
+                    roleHelper.AddUserToRole(user.Id, "Unassigned");
+                }
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                    if (user.Roles.FirstOrDefault() == null)
-                    {
-                        roleHelper.AddUserToRole(user.Id, "Unassigned");
-                    }
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -501,7 +500,7 @@ namespace Bug_Tracker.Controllers
                     // If the user does not have an account, then prompt the user to create an account
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+                    return View("ExternalLoginConfirmation", new CustomExternalRegister { Email = loginInfo.Email });
             }
         }
 
@@ -510,7 +509,7 @@ namespace Bug_Tracker.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
+        public async Task<ActionResult> ExternalLoginConfirmation(CustomExternalRegister model, string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -525,10 +524,21 @@ namespace Bug_Tracker.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser {
+                    UserName = model.Email, 
+                    Email = model.Email,
+                    LastName = model.LastName,
+                    FirstName = model.FirstName,
+                    AvatarPath = "/Avatars/purpleuser.png"
+                
+                };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    if (user.Roles.FirstOrDefault() == null)
+                    {
+                        roleHelper.AddUserToRole(user.Id, "Unassigned");
+                    }
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {

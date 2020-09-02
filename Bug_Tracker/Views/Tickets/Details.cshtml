@@ -56,7 +56,6 @@
                                     {
                                         <span></span>
                                     }
-
                                 }
                             </div>
                         </div>
@@ -76,11 +75,18 @@
         {
             <h4 class="margPad" style="font-size:40px; padding:15px; cursor:pointer; color:#343a40" onclick="window.location.href='@Url.Action("Edit","Tickets", new { id = Model.Id })'"><i class="fa fa-edit" style="font-size:38px"> </i> Close Ticket</h4>
         }
-        @if (User.IsInRole("Submitter") || !ticketHelper.GetMyTickets().Any(g=>g.Id == Model.Id))
+        @if (User.IsInRole("Submitter") || !ticketHelper.GetMyTickets().Any(g => g.Id == Model.Id))
         {
             <h4 class="margPad" style="font-size:40px; padding:40px;color:#343a40"><i style="font-size:38px"> </i> </h4>
         }
     </div>
+    @if (Model.IsArchived == true)
+    {
+        <div class="col">
+            <h1 style="font-size: 40px; padding:18px;color:#c6371c">[ARCHIVED]</h1>
+        </div>
+    }
+
     <div class="col">
         @if (Model.TicketPriority.Name == "URGENT")
         {
@@ -178,7 +184,7 @@
 
             @if (ticketHelper.CanMakeComment(Model.Id))
             {
-                using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+                using (Html.BeginForm("Create", "TicketComments", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
                     @Html.AntiForgeryToken()
                     <div class="container">
@@ -188,7 +194,7 @@
                             <div class="form-group">
                                 @Html.Label("Comment", htmlAttributes: new { @class = "control-label col-md-2" })
                                 <div class="col-md-12">
-                                    @Html.TextArea("Comment", new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.Editor("Comment", new { htmlAttributes = new { @placeholder = "Include '[HELP]' to notify the project manager of this comment. ", @class = "form-control" } })
                                 </div>
                             </div>
 

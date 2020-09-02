@@ -155,7 +155,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var ticket in Model.Tickets)
+                                @foreach (var ticket in Model.Tickets.Where(g=>g.IsArchived == false))
                                 {
                                     <tr style="font-size:18px">
                                         <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new {ticket.Id })'">
@@ -198,7 +198,6 @@
                                             {
                                                 <span class=" margPad">On Hold</span>
                                             }
-
                                         </td>
                                         <td>
                                             @ticket.TicketType.Name
@@ -218,8 +217,6 @@
 
 </div>
 @section scripts{
-    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#table_id').DataTable();

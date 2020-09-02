@@ -53,7 +53,7 @@
                                     }
 
                                     <td>
-                                        @item.Tickets.Count()
+                                        @item.Tickets.Where(g=>g.IsArchived == false).Count()
                                     </td>
                                     <td>
                                         @item.Created.ToString("MM/dd/yyyy, hh:mm tt")

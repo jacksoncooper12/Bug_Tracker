@@ -35,11 +35,27 @@
 </style>
 
 <div>
-    <h1 class="topPad" style="padding-top:0.8rem; color:#343a40">Project Details</h1>
+    <div class="row">
+        <div class="col-3">
+            <h1 style="color:#343a40;">
+                Project
+
+            </h1>
+
+        </div>
+        <div class="col">
+            @if (User.IsInRole("Admin"))
+            {
+                <span style="background-color:cornflowerblue;color:white;border-radius:3px; cursor:pointer; padding-bottom:0.3rem; padding-top:0.8rem" onclick="window.location.href='@Url.Action("Edit", "Projects", new { id = Model.project.Id })'">
+                    <span style="font-weight: 400; font-size:30px; padding:1rem; margin-bottom:1rem!important">Edit</span>
+                </span>
+            }
+        </div>
+    </div>
     <div class="row">
         <div class="col-lg-4">
             <div class="small-box" style="background-color:forestgreen; color:white">
-                <h1 style="font-size:58px; padding:20px; padding-bottom:0">@Html.DisplayFor(model => model.project.Name)</h1>
+                <h1 style="font-size:52px; padding:20px; padding-bottom:0">@Html.DisplayFor(model => model.project.Name)</h1>
                 @foreach (var user in @projectHelper.ListUsersOnProjectInRole(Model.project.Id, "ProjectManager"))
                 {
 
@@ -57,23 +73,11 @@
                         <h5 style="font-size:22px; padding:20px; padding-bottom:15px;">@Model.project.Tickets.Count() Tickets</h5>
                     </div>
                 </div>
-                            
-                @if (User.IsInRole("Admin"))
-                {
-                    <div class="row" style="margin:0px; font-weight:300">
-                        <div class="col bg text-center" style="background-color:cornflowerblue;color:white;border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("Edit", "Projects", new { id = Model.project.Id })'">
-                            <h3 style="font-weight: 400; font-size:30px; padding-top:12px; padding-bottom:5px">Edit</h3>
-                        </div>
-                        <div class="col bg-gradient-red text-center" style="border-radius:2px; cursor:pointer" onclick="window.location.href='@Url.Action("Delete", "Projects", new { id = Model.project.Id })'">
-                            <h3 style="font-weight: 400; font-size:30px; padding-top:12px; padding-bottom:5px">Delete</h3>
-                        </div>
-                    </div>
-                }
             </div>
         </div>
         <div class="col-lg-8">
             <div class="small-box" style="background-color:cornflowerblue; color:white">
-                <h1 style="padding:20px; padding-bottom:5px">Project Team</h1><hr />
+                <h1 style="padding:20px; margin-bottom:30px">Project Team</h1>
                 <div class="row">
                     <div class="col" style="padding:0px 30px 0px 30px">
                         <table class="table bg-transparent">
@@ -166,7 +170,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var ticket in Model.project.Tickets)
+                            @foreach (var ticket in Model.project.Tickets.Where(g => g.IsArchived == false))
                             {
                                 <tr style="font-size:18px">
                                     @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager") && projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.project.Id))
@@ -193,7 +197,6 @@
                                             @ticket.Developer.FullName
                                         </td>
                                     }
-
                                     <td class="text-center">
                                         @if (ticket.TicketPriority.Name == "URGENT")
                                         {

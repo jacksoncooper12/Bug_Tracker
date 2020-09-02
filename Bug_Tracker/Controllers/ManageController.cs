@@ -267,7 +267,20 @@ namespace Bug_Tracker.Controllers
             }
             return RedirectToAction("Index","Home");
         }
-        
+
+        [HttpPost]
+        public ActionResult ChangeName(string firstName, string lastName)
+        {
+            if (!firstName.IsNullOrWhiteSpace() && !lastName.IsNullOrWhiteSpace() && firstName.Length < 12 && lastName.Length < 12)
+            {
+                var user = db.Users.Find(User.Identity.GetUserId());
+                user.FirstName = firstName;
+                user.LastName = lastName;
+                db.SaveChanges();
+            } 
+            return RedirectToAction("Index", "Home");
+        }
+
 
         //
         // GET: /Manage/SetPassword

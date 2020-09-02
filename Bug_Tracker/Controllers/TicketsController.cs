@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Bug_Tracker.Helpers;
@@ -91,9 +92,9 @@ namespace Bug_Tracker.Controllers
             }
             Ticket ticket = db.Tickets.Find(id);
             var user = db.Users.Find(User.Identity.GetUserId());
-            foreach(var notification in user.Notifications)
+            foreach (var notification in user.Notifications)
             {
-                if(notification.TicketId == id)
+                if (notification.TicketId == id)
                 {
                     notification.IsRead = true;
                     db.SaveChanges();
@@ -107,7 +108,7 @@ namespace Bug_Tracker.Controllers
         }
 
         // GET: Tickets/Create
-        /*[Authorize(Roles = "Submitter")]*/
+        [Authorize(Roles = "None")]
         public ActionResult Create(int projectId)
         {
             var userId = User.Identity.GetUserId();
@@ -127,7 +128,7 @@ namespace Bug_Tracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Description,Title,DeveloperId")] Ticket ticket, int projectId , int ticketStatusId, int ticketPriorityId, int ticketTypeId)
+        public ActionResult Create([Bind(Include = "Id,Description,Title,DeveloperId")] Ticket ticket, int projectId, int ticketStatusId, int ticketPriorityId, int ticketTypeId)
         {
             var userId = User.Identity.GetUserId();
             if (ModelState.IsValid)
@@ -148,25 +149,32 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Details/", "Projects", new { ticket.Id });
         }
 
+        public ActionResult Rejection(int id)
+        {
+            Ticket ticket = db.Tickets.Find(id);
+            var manager = projectHelper.ListUsersOnProjectInRole(ticket.Project.Id, "ProjectManager").FirstOrDefault();
+            ViewBag.err = $"You do not have permission to edit this ticket. If you feel this is a mistake, please contact manager {manager.FullName} at {manager.Email}";
+            return View();
+
+        }
+
         // GET: Tickets/Edit/5
-        [Authorize(Roles = "ProjectManager,Developer,Admin")]
+        [Authorize(Roles = "ProjectManager,Developer,Admin,Submitter")]
         public ActionResult Edit(int id)
         {
             Ticket ticket = db.Tickets.Find(id);
-            if (User.IsInRole("Developer") || User.IsInRole("ProjectManager")){
-                if (!projectHelper.IsUserOnProject(User.Identity.GetUserId(), ticket.ProjectId))
-                {
-                    return RedirectToAction("index", "home");
-                }
+            if (!ticketHelper.CanEditTicket(id))
+            {
+                return RedirectToAction("Rejection", "Tickets", new { id });
             }
 
-            
+
             var projectId = ticket.ProjectId;
             if (ticket == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.DeveloperId = new SelectList(projectHelper.ListUsersOnProjectInRole(projectId, "Developer"), "Id", "FullName");
+            ViewBag.DeveloperId = new SelectList(projectHelper.ListUsersOnProjectInRole(projectId, "Developer"), "Id", "FullName", ticket.DeveloperId);
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
             ViewBag.SubmitterId = new SelectList(projectHelper.ListUsersOnProjectInRole(projectId, "Submitter"), "Id", "FirstName", ticket.SubmitterId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
@@ -180,14 +188,18 @@ namespace Bug_Tracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Description,Title,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Description,Title,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
         {
-            
+
             if (ModelState.IsValid)
             {
-                if(ticket.DeveloperId != null)
+                if (ticket.DeveloperId != null)
                 {
                     ticket.TicketStatusId = 2;
+                }
+                if(ticket.DeveloperId == null)
+                {
+                    ticket.TicketStatusId = 1;
                 }
                 if (ticket.IsResolved == true)
                 {
@@ -197,7 +209,8 @@ namespace Bug_Tracker.Controllers
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
                 var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-                ticketHelper.EditedTicket(oldTicket, newTicket);
+                await ticketHelper.ManageTicketNotifications(oldTicket, newTicket, "no");
+                historyHelper.ManageHistories(oldTicket, newTicket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             ViewBag.DeveloperId = new SelectList(db.Users, "Id", "FirstName", ticket.DeveloperId);

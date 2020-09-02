@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
@@ -53,7 +54,7 @@ namespace Bug_Tracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TicketId,FileName")] TicketAttachment ticketAttachment, HttpPostedFileBase file)
+        public async Task<ActionResult> Create([Bind(Include = "TicketId,FileName")] TicketAttachment ticketAttachment, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
@@ -82,7 +83,7 @@ namespace Bug_Tracker.Controllers
                     db.TicketAttachments.Add(ticketAttachment);
                     db.SaveChanges();
                     var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketAttachment.TicketId);
-                    ticketHelper.ManageTicketNotifications(oldTicket, newTicket);
+                    await ticketHelper.ManageTicketNotifications(oldTicket, newTicket, "no");
                 }
 
                 return RedirectToAction("Details", "Tickets", new { id = ticketAttachment.TicketId });

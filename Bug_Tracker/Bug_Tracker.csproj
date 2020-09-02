@@ -241,6 +241,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="Images\BG.jpg" />
+    <Content Include="Images\facebook_logos_PNG19751.png" />
+    <Content Include="Images\google_PNG19635.png" />
     <Content Include="Images\icons\favicon.ico" />
     <Content Include="Images\icons\map-marker.png" />
     <Content Include="Scripts\adminlte.js" />
@@ -267,6 +269,7 @@
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jquery.overlayScrollbars.min.js" />
     <Content Include="Scripts\jquery.vmap.js" />
+    <Content Include="Scripts\jquery.vmap.usa.js" />
     <Content Include="Scripts\main.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\popper.js" />
@@ -350,9 +353,9 @@
     <Content Include="Views\Account\ConfirmationSent.cshtml" />
     <Content Include="Views\Assignments\ManageProjectUsers.cshtml" />
     <Content Include="Views\Projects\ProjectWizard.cshtml" />
-    <Content Include="WebFonts\fa-brands-400.svg" />
-    <Content Include="WebFonts\fa-regular-400.svg" />
-    <Content Include="WebFonts\fa-solid-900.svg" />
+    <Content Include="webfonts\fa-brands-400.svg" />
+    <Content Include="webfonts\fa-regular-400.svg" />
+    <Content Include="webfonts\fa-solid-900.svg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -387,24 +390,27 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fa-solid-900.woff2" />
     <None Include="packages.config" />
     <Content Include="Scripts\adminlte.js.map" />
-    <Content Include="WebFonts\fa-brands-400.eot" />
-    <Content Include="WebFonts\fa-brands-400.ttf" />
-    <Content Include="WebFonts\fa-brands-400.woff" />
-    <Content Include="WebFonts\fa-brands-400.woff2" />
-    <Content Include="WebFonts\fa-regular-400.eot" />
-    <Content Include="WebFonts\fa-regular-400.ttf" />
-    <Content Include="WebFonts\fa-regular-400.woff" />
-    <Content Include="WebFonts\fa-regular-400.woff2" />
-    <Content Include="WebFonts\fa-solid-900.eot" />
-    <Content Include="WebFonts\fa-solid-900.ttf" />
-    <Content Include="WebFonts\fa-solid-900.woff" />
-    <Content Include="WebFonts\fa-solid-900.woff2" />
+    <Content Include="webfonts\fa-brands-400.eot" />
+    <Content Include="webfonts\fa-brands-400.ttf" />
+    <Content Include="webfonts\fa-brands-400.woff" />
+    <Content Include="webfonts\fa-brands-400.woff2" />
+    <Content Include="webfonts\fa-regular-400.eot" />
+    <Content Include="webfonts\fa-regular-400.ttf" />
+    <Content Include="webfonts\fa-regular-400.woff" />
+    <Content Include="webfonts\fa-regular-400.woff2" />
+    <Content Include="webfonts\fa-solid-900.eot" />
+    <Content Include="webfonts\fa-solid-900.ttf" />
+    <Content Include="webfonts\fa-solid-900.woff" />
+    <Content Include="webfonts\fa-solid-900.woff2" />
     <Content Include="Views\Assignments\RemoveProjectUsers.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\summernote-bs4.min.js.map" />
+    <None Include="Properties\PublishProfiles\jcBugTracker - Web Deploy.pubxml" />
+    <Content Include="Views\Tickets\Rejection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008101648019_SeedTest.resx">

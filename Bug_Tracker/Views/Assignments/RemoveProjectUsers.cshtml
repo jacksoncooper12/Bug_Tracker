@@ -3,7 +3,7 @@
     ViewBag.Title = "RemoveProjectUsers";
 }
 
-<h2>RemoveProjectUsers</h2>
+<h2>Remove Project Users</h2>
 <style>
     #UserIds, #ProjectIds {
         height: 200px
@@ -16,14 +16,12 @@
 
     <div class="row">
         <div class="col-sm-8">
-            Select User(s)<br />
-            Ordered Alphabetically by Last Name<br />
             <h2>@Html.ListBox("UserIds")</h2>
         </div>
     </div>
     <div class="row">
         <div class="col text-center">
-            <button type="submit" class="btn btn-primary" style="width:15em">Add User(s) to Project(s)</button>
+            <button type="submit" class="btn btn-primary" style="width:15em">Remove User(s)</button>
         </div>
     </div>
 }

@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Bug_Tracker.Helpers;
 using Bug_Tracker.Models;
 using Microsoft.AspNet.Identity;
 
@@ -14,6 +16,7 @@ namespace Bug_Tracker.Controllers
     public class TicketCommentsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private TicketHelper ticketHelper = new TicketHelper();
 
         // GET: TicketComments
         public ActionResult Index()
@@ -50,20 +53,24 @@ namespace Bug_Tracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,TicketId,Comment")] TicketComment ticketComment)
+        public async  Task<ActionResult> Create([Bind(Include = "Id,TicketId,Comment")] TicketComment ticketComment)
         {
+
             if (ModelState.IsValid)
             {
+                ticketComment.Ticket = db.Tickets.Find(ticketComment.TicketId);
+                var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketComment.TicketId);
+                db.Entry(ticketComment.Ticket).State = EntityState.Modified;
+
                 ticketComment.UserId = User.Identity.GetUserId();
                 ticketComment.Created = DateTime.Now;
                 db.TicketComments.Add(ticketComment);
-                db.SaveChanges();
-                return RedirectToAction("Details", "Tickets", new { id = ticketComment.TicketId });
-            }
 
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketComment.TicketId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketComment.UserId);
-            return View(ticketComment);
+                db.SaveChanges();
+                var newTicket = db.Tickets.Find(ticketComment.TicketId);
+                await ticketHelper.ManageTicketNotifications(oldTicket, newTicket,"yes");
+            }
+            return RedirectToAction("Details", "Tickets", new { id = ticketComment.TicketId });
         }
 
         // GET: TicketComments/Edit/5

@@ -78,7 +78,7 @@
                                         <div><img src="@user.AvatarPath" class="img-circle" width="30" /> @Html.DisplayFor(modelItem => user.FullName)</div>
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => user.Email)
+                                        <a href="mailto:@user.Email">@user.Email</a>
                                     </td>
                                     @if (roleHelper.IsUserInRole(user.Id, "Admin"))
                                     {

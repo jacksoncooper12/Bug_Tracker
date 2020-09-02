@@ -1,11 +1,10 @@
 ﻿@model Bug_Tracker.Models.ExternalLoginListViewModel
 @using Microsoft.Owin.Security
 
-<h4>Use another service to log in.</h4>
-<hr />
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
-    if (loginProviders.Count() == 0) {
+    if (loginProviders.Count() == 0)
+    {
         <div>
             <p>
                 There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
@@ -13,15 +12,39 @@
             </p>
         </div>
     }
-    else {
-        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl })) {
-            @Html.AntiForgeryToken()
-            <div id="socialLoginList">
-                <p>
-                    @foreach (AuthenticationDescription p in loginProviders) {
-                        <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+    else
+    {
+        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
+        {
+            <div class="row" style="right:1rem">
+                @Html.AntiForgeryToken()
+                @foreach (AuthenticationDescription p in loginProviders)
+                {
+                    if (p.AuthenticationType == "Google")
+                    {
+                        <div class="col-4" style="padding-left:5px">
+                            <p>
+                                <button type="submit" class="btn" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account" style="background-color:forestgreen; color:white; font-weight:bold; width:60px; border-radius:8px"><i class="fa fa-google" style="font-size:2rem;"> </i> </button>
+                            </p>
+                        </div>
                     }
-                </p>
+                    else if (p.AuthenticationType == "Facebook")
+                    {
+                        <div class="col-4" style="padding-left:0">
+                            <p>
+                                <button type="submit" class="btn" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account" style="background-color: #3b5998; color:white;width:60px; border-radius:8px"><i class="fa fa-facebook-f" style="font-size:2rem"> </i> </button>
+                            </p>
+                        </div>
+                    }
+                    else if (p.AuthenticationType == "Twitter")
+                    {
+                        <div class="col-4" style="padding-left:0; margin-left:-5px">
+                            <p>
+                                <button type="submit" class="btn" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account" style="background-color: cornflowerblue; color:white;width:60px; border-radius:8px"><i class="fa fa-twitter" style="font-size:2rem"> </i> </button>
+                            </p>
+                        </div>
+                    }
+                }
             </div>
         }
     }
