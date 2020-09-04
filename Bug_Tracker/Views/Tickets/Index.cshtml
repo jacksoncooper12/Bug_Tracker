@@ -65,40 +65,40 @@ else
                                         {
                                             foreach (var ticket in item.Tickets)
                                             {
-                                        <tr>
-                                            <td>
-                                                @ticket.Title
-                                            </td>
-                                            <td>
-                                                @ticket.Description
-                                            </td>
+                                                <tr>
+                                                    <td>
+                                                        @ticket.Title
+                                                    </td>
+                                                    <td>
+                                                        @ticket.Description
+                                                    </td>
 
-                                            <td>
-                                                @ticket.Project.Name
-                                            </td>
-                                            <td class="text-center">
-                                                @if (ticket.TicketPriority.Name == "URGENT")
-                                                {
-                                                    <span class=" margPad" style="background-color:#c6371c; color:white">URGENT</span>
-                                                }
-                                                @if (ticket.TicketPriority.Name == "Low")
-                                                {
-                                                    <span class="margPad" style="background-color:forestgreen; color:white">Low </span>
-                                                }
-                                                @if (ticket.TicketPriority.Name == "Medium")
-                                                {
-                                                    <span class="margPad" style="background-color:cornflowerblue; color:white">Medium</span>
-                                                }
-                                                @if (ticket.TicketPriority.Name == "High")
-                                                {
-                                                    <span class="margPad" style="background-color:#ffc107; color:#343a40">High </span>
-                                                }
-                                                @if (ticket.TicketPriority.Name == "On Hold")
-                                                {
-                                                    <span class=" margPad">On Hold</span>
-                                                }
-                                            </td>
-                                        </tr>
+                                                    <td>
+                                                        @ticket.Project.Name
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if (ticket.TicketPriority.Name == "URGENT")
+                                                        {
+                                                            <span class=" margPad" style="background-color:#c6371c; color:white">URGENT</span>
+                                                        }
+                                                        @if (ticket.TicketPriority.Name == "Low")
+                                                        {
+                                                            <span class="margPad" style="background-color:forestgreen; color:white">Low </span>
+                                                        }
+                                                        @if (ticket.TicketPriority.Name == "Medium")
+                                                        {
+                                                            <span class="margPad" style="background-color:cornflowerblue; color:white">Medium</span>
+                                                        }
+                                                        @if (ticket.TicketPriority.Name == "High")
+                                                        {
+                                                            <span class="margPad" style="background-color:#ffc107; color:#343a40">High </span>
+                                                        }
+                                                        @if (ticket.TicketPriority.Name == "On Hold")
+                                                        {
+                                                            <span class=" margPad">On Hold</span>
+                                                        }
+                                                    </td>
+                                                </tr>
                                             }
                                         }
                                     </tbody>
@@ -113,6 +113,11 @@ else
     if (User.IsInRole("Developer"))
     {
         <div class="container-fluid" style="padding-top:1rem">
+            <div class="row" style="padding-bottom:0.5rem">
+                <div class="col-12">
+                    <h2><span onclick="window.location.href='@Url.Action("Index","TicketHistories")'" style="background-color:cornflowerblue; color:white;cursor:pointer;padding:0.2rem 0.5rem 0.2rem 0.5rem; border-radius:4px" class="float-right">Ticket Histories</span></h2>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-lg-12">
                     <div class="small-box" style="padding:3rem; background-color:#343a40; color:white">

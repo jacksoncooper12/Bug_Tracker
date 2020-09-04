@@ -20,28 +20,17 @@ namespace Bug_Tracker.Controllers
         TicketHelper ticketHelper = new TicketHelper();
         private HistoriesHelper historyHelper = new HistoriesHelper();
         // GET: TicketHistories
-        [Authorize (Roles = "Admin, ProjectManager")]
+        [Authorize (Roles = "Admin, ProjectManager,Developer")]
         public ActionResult Index()
         {
-            if (User.IsInRole("Admin"))
+            var histories = new List<TicketHistory>();
+            var tix = ticketHelper.GetMyTickets();
+            foreach(var history in tix.SelectMany(g => g.TicketHistories))
             {
-                var ticketHistories  = db.TicketHistories.ToList();
-                return View(ticketHistories);
+                histories.Add(history);
             }
-            else
-            {
-                var ticketHistories = new List<TicketHistory>();
-                foreach(var stuff in db.TicketHistories.ToList())
-                {
-                    if (projectHelper.IsUserOnProject(User.Identity.GetUserId(), stuff.Ticket.ProjectId))
-                    {
-                        ticketHistories.Add(stuff);
-                    }
-                }
-                return View(ticketHistories);
-            }
+            return View(histories);
 
-            
         }
 
         // GET: TicketHistories/Details/5
