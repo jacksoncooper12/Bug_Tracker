@@ -128,7 +128,7 @@ namespace Bug_Tracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Description,Title,DeveloperId")] Ticket ticket, int projectId, int ticketStatusId, int ticketPriorityId, int ticketTypeId)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Description,Title,DeveloperId")] Ticket ticket, int projectId, int ticketStatusId, int ticketPriorityId, int ticketTypeId)
         {
             var userId = User.Identity.GetUserId();
             if (ModelState.IsValid)
@@ -141,6 +141,7 @@ namespace Bug_Tracker.Controllers
                 ticket.SubmitterId = userId;
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
+                await ticketHelper.ManageTicketNotifications(ticket, ticket, "new");
                 return RedirectToAction("Details", "Tickets", new { ticket.Id });
             }
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);

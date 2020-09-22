@@ -55,6 +55,9 @@ namespace Bug_Tracker.Controllers
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name");
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name");
+            var newId = (int)id;
+            ViewBag.UserIds = new MultiSelectList(projectHelper.ListUsersNotOnProject(newId).OrderBy(g=>g.LastName), "Id", "FullName");
+            ViewBag.nonUserIds = new MultiSelectList(projectHelper.ListUsersOnProject(newId).OrderBy(g => g.LastName), "Id", "FullName");
             return View(tc);
         }
 

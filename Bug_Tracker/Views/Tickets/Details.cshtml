@@ -174,7 +174,7 @@
                         foreach (var item in Model.TicketComments)
                         {
                             <div style="padding-left:20px; padding-right:20px; padding-bottom:10px; margin-top:-20px">
-                                <h5 style="color:cornflowerblue">@item.User.FullName<span class="float-right">@item.Created.ToString("M/dd/yyy")</span></h5>
+                                <h5 style="color:cornflowerblue"><img src="@item.User.AvatarPath" width="30" class="img-circle" /> @item.User.FullName<span class="float-right">@item.Created.ToString("M/dd/yyy")</span></h5>
                                 <h5>@item.Comment</h5><hr />
                             </div>
                         }

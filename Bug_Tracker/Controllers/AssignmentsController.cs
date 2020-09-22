@@ -71,8 +71,10 @@ namespace Bug_Tracker.Controllers
 
         public ActionResult ManageProjectUsers(int projectId)
         {
+            var project = db.Projects.Find(projectId);
             ViewBag.UserIds = new MultiSelectList(projectHelper.ListUsersNotOnProject(projectId), "Id", "FullName");
-            return View();
+            ViewBag.nonUserIds = new MultiSelectList(projectHelper.ListUsersOnProject(projectId), "Id", "FullName");
+            return View(project);
         }
 
 
@@ -104,13 +106,13 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RemoveProjectUsers(List<string> userIds, int projectId)
+        public ActionResult RemoveProjectUsers(List<string> nonUserIds, int projectId)
         {
-            if (userIds == null)
+            if (nonUserIds == null)
             {
                 return RedirectToAction("ManageProjectUsers");
             }
-            foreach (var userId in userIds)
+            foreach (var userId in nonUserIds)
             {
                 if (userId != null)
                 {

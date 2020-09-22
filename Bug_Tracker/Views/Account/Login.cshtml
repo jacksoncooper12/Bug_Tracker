@@ -36,7 +36,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <div class="modal fade ct" id="zmodal" style="margin-top:6.5rem">
+                <div class="modal fade ct" id="zmodal" style="margin-top:1.5rem">
                     <div class="modal-dialog modal-md">
                         <div class="modal-content" style="background-color: rgba(52, 58, 64, 0.98); color:white">
                             <div class="row">
@@ -48,6 +48,7 @@
                                         @Html.Hidden("emailKey", "DemoDev1Email");
                                         <div style="margin-top:2rem">
                                             <button type="submit" class="btn btn-flat" style="color:white; background-color:cornflowerblue"><h2><i class="fa fa-address-card-o"></i> Admin</h2></button>
+                                            <p style="color:white">Creates projects and assigns teams <br />Full control over everything</p>
                                         </div>
                                     }
                                     @using (Html.BeginForm("DemoLoginAsync", "Account", FormMethod.Post))
@@ -56,6 +57,7 @@
                                         @Html.Hidden("emailKey", "DemoDev2Email");
                                         <div style="margin-top:2rem">
                                             <button type="submit" class="btn btn-flat" style="color:white; background-color:#ffc107"><h2><i class="fa fa-users"></i> Manager</h2></button>
+                                            <p style="color:white">Oversees collections of tickets  <br /> on Admin assigned projects</p>
                                         </div>
                                     }
                                     @using (Html.BeginForm("DemoLoginAsync", "Account", FormMethod.Post))
@@ -64,6 +66,7 @@
                                         @Html.Hidden("emailKey", "DemoDev3Email");
                                         <div style="margin-top:2rem">
                                             <button type="submit" class="btn btn-flat" style="color:white; background-color:#c6371c"><h2><i class="fa fa-usb"></i> Developer</h2></button>
+                                            <p style="color:white">Updates and resolves tickets<br /> as assigned by the Manager</p>
                                         </div>
                                     }
                                     @using (Html.BeginForm("DemoLoginAsync", "Account", FormMethod.Post))
@@ -72,9 +75,9 @@
                                         @Html.Hidden("emailKey", "DemoDev4Email");
                                         <div style="margin-top:2rem; margin-bottom:4rem">
                                             <button type="submit" class="btn btn-flat" style="color:white; background-color:forestgreen"><h2><i class="fa fa-envelope"></i> Submitter</h2></button>
+                                            <p style="color:white">Submits issues in the form of<br /> tickets for Managers to assign</p>
                                         </div>
                                     }
-
                                 </div>
                             </div>
                         </div>
@@ -88,11 +91,8 @@
 
         <div class="container-login100">
             <div class="wrap-login100">
-                <div class="login100-form-title" style="background-image: url(/Images/BG.jpg); height:250px">
+                <div class="login100-form-title" style="background-image: url(/Images/BG.jpg);">
                     <h1 style="font-weight:600; font-size:40px;color: white;"><span>Bug Tracker</span></h1>
-                    <h2 style="margin-top:1rem; color:white">
-                        Sign In
-                    </h2>
                 </div>
                 @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
                 {

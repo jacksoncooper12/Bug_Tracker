@@ -338,7 +338,6 @@
                                     </div>
                                 }
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -406,7 +405,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <div class="modal fade ct" id="xmodal" style="margin-top:3rem">
+                <div class="modal fade ct" id="xmodal" style="margin-top:1rem">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content" style="background-color: rgba(52, 58, 64, 0.98); color:white">
                             <div class="modal-header text-center" style=" ">
@@ -437,7 +436,6 @@
                                         <tbody>
                                             @foreach (var notification in user.Notifications)
                                             {
-
                                                 <tr style="cursor:pointer;" onclick="window.location.href='@Url.Action("Details", "Tickets", new { notification.Ticket.Id })'">
                                                     @if (notification.IsRead == false)
                                                     {
@@ -476,9 +474,9 @@
                                 }
                                 else
                                 {
-                                    <div class="row" style="margin-top:10rem">
+                                    <div class="row" style="margin:10rem 0 10rem 0">
                                         <div class="col text-center">
-                                            <h2> You have not recieved any notifications <i class="fa fa-check-circle"></i> </h2>
+                                            <h2> You have not received any notifications <i class="fa fa-check-circle"></i> </h2>
                                         </div>
                                     </div>
                                 }
@@ -610,52 +608,57 @@
                                 <i class="nav-icon fas fa-ticket-alt"></i>
                                 <p>
                                     Tickets
-
                                 </p>
                             </a>
                         </li>
+                        @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+                        {
+                            <li class="nav-item has-treeview">
+                                <a href=@Url.Action("Index", "Users") class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        Users
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href=@Url.Action("Index","Users") class="nav-link" style="color:cornflowerblue !important">
+                                            <i class="fas fa-atlas nav-icon"></i>
+                                            <p>All Users</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href=@Url.Action("Index","Users", new { role = "ProjectManager" }) class="nav-link">
+                                            <i class="fas fa-user-alt nav-icon"></i>
+                                            <p>Managers</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href=@Url.Action("Index","Users", new { role = "Developer" }) class="nav-link">
+                                            <i class="fas fa-user nav-icon"></i>
+                                            <p>Developers</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href=@Url.Action("Index","Users", new { role = "Submitter" }) class="nav-link">
+                                            <i class="fas fa-user nav-icon"></i>
+                                            <p>Submitters</p>
+                                        </a>
+                                    </li>
+                                    @if (roleHelper.UsersInRole("Unassigned").Count() > 0)
+                                    {
+                                        <li class="nav-item">
+                                            <a href=@Url.Action("Index","Users", new { role = "Unassigned" }) class="nav-link">
+                                                <i class="fas fa-user nav-icon"></i>
+                                                <p>Unassigned</p>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
 
-                        <li class="nav-item has-treeview">
-                            <a href=@Url.Action("Index", "Users") class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Users
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href=@Url.Action("Index","Users") class="nav-link" style="color:cornflowerblue !important">
-                                        <i class="fas fa-atlas nav-icon"></i>
-                                        <p>All Users</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href=@Url.Action("Index","Users", new { role = "ProjectManager" }) class="nav-link">
-                                        <i class="fas fa-user-alt nav-icon"></i>
-                                        <p>Managers</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href=@Url.Action("Index","Users", new { role = "Developer" }) class="nav-link">
-                                        <i class="fas fa-user nav-icon"></i>
-                                        <p>Developers</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href=@Url.Action("Index","Users", new { role = "Submitter" }) class="nav-link">
-                                        <i class="fas fa-user nav-icon"></i>
-                                        <p>Submitters</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href=@Url.Action("Index","Users", new { role = "Unassigned" }) class="nav-link">
-                                        <i class="fas fa-user nav-icon"></i>
-                                        <p>Unassigned</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        }
 
                         @if (User.IsInRole("Admin"))
                         {
@@ -726,7 +729,8 @@
 
     </div>
     <script src="~/Scripts/jquery-3.2.1.min.js"></script>
-    <script src="~/Scripts/jquery.vmap.js"></script>
+
+
     <!-- jQuery UI 1.11.4 -->
     <script src="~/Scripts/jquery-ui.min.js"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -739,7 +743,6 @@
     <script src="~/Scripts/Chart.min.js"></script>
     <!-- Sparkline -->
     <script src="~/Scripts/sparkline.js"></script>
-
     <!-- jQuery Knob Chart -->
     <script src="~/Scripts/jquery.knob.min.js"></script>
     <!-- daterangepicker -->
@@ -758,9 +761,9 @@
     <!-- AdminLTE for demo purposes -->
     <script src="~/Scripts/demo.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9">
+    <script src="~/Scripts/jquery.vmap.js"></script>
 
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 

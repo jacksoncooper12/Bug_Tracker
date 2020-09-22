@@ -227,6 +227,17 @@ namespace Bug_Tracker.Helpers
                 db.TicketNotifications.Add(notification);
                 db.SaveChanges();
             }
+            if (yes == "new")
+            {
+                var notification = new TicketNotification();
+                notification.UserId = projectHelper.ListUsersOnProjectInRole(newTicket.ProjectId, "ProjectManager").FirstOrDefault().Id;
+                notification.Created = DateTime.Now;
+                notification.TicketId = newTicket.Id;
+                notification.User = db.Users.Find(projectHelper.ListUsersOnProjectInRole(newTicket.ProjectId, "ProjectManager").FirstOrDefault().Id);
+                notification.Message = $"A new ticket has been submitted. Please assign it a Developer";
+                db.TicketNotifications.Add(notification);
+                db.SaveChanges();
+            }
         }
         public bool CanEditTicket(int ticketId)
         {
@@ -276,7 +287,7 @@ namespace Bug_Tracker.Helpers
                 case "Developer":
                 case "Submitter":
                     var ticket = db.Tickets.Find(ticketId);
-                    if (ticket.DeveloperId == userId || ticket.SubmitterId == userId)
+                    if (projectHelper.IsUserOnProject(userId,ticket.Project.Id))
                     {
                         return true;
                     }

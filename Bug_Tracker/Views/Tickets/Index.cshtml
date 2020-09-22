@@ -142,7 +142,7 @@ else
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.Where(t => t.DeveloperId == User.Identity.GetUserId()))
+                                        @foreach (var item in Model.Where(t => t.DeveloperId == User.Identity.GetUserId()).Where(t=>t.IsArchived == false))
                                         {
                                             <tr>
                                                 <td style="cursor:pointer" onclick="window.location.href='@Url.Action("Details","Tickets", new { item.Id })'">

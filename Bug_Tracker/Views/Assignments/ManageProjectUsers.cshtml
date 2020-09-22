@@ -3,27 +3,35 @@
     ViewBag.Title = "ManageProjectUsers";
     var projectHelper = new Bug_Tracker.Helpers.ProjectHelper();
 }
-    <style>
-        #UserIds, #ProjectIds {
-            height: 200px
-        }
-    </style>
-<h2>Add Project Users</h2>
-
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-
+<style>
+    #UserIds, #ProjectIds {
+        height: 200px;
+        width: 70%
+    }
+</style>
+<div class="container">
     <div class="row">
-        <div class="col-sm-8">
-            <h2>@Html.ListBox("UserIds")</h2>
+        <div class="col">
+            <h2>Add Project Members</h2>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <h4>@Html.ListBox("UserIds")</h4>
+                <button type="submit" class="btn btn-primary" style="width:15em">Add User(s)</button>
+            }
+        </div>
+        <div class="col">
+            <h2>Add Project Members</h2>
+            @using (Html.BeginForm("RemoveProjectUsers", "Assignments", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("projectId", Model.Id)
+                <h4>@Html.ListBox("nonUserIds")</h4>
+
+                <button type="submit" class="btn btn-primary" style="width:15em">Remove User(s)</button>
+            }
         </div>
     </div>
-    <div class="row">
-        <div class="col text-center">
-            <button type="submit" class="btn btn-primary" style="width:15em">Add User(s)</button>
-        </div>
-    </div>
-}
-<hr />
+</div>
+
 

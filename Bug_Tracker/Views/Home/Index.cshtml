@@ -114,7 +114,7 @@
 }
 else
 {
-    <h1 style="padding-top:1rem; color:#343a40">Welcome Back, @Model.User.FirstName</h1>
+    <h1 style=" color:#343a40">Welcome Back, @Model.User.FirstName</h1>
     <div class="row">
         <div class="col-8">
             <div class="small-box" style="padding:10px; background-color:#343a40; color:white;">
@@ -384,7 +384,7 @@ else
                             {
                                 <div class="col-3" onclick="window.location.href='@Url.Action("Details", "Tickets", new { image.Ticket.Id })'" style="cursor:pointer; padding-bottom:1rem">
                                     <p>@image.Ticket.Title (@image.User.FullName)</p>
-                                    <img src="@image.FilePath" width="200" />
+                                    <img src="@image.FilePath" width="200" class="img-responsive"/>
                                 </div>
                             }
                             else
@@ -538,7 +538,6 @@ else
             }
         });
         bar();
-
         </script>
     }
 
